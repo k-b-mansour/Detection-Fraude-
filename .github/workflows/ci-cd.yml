@@ -77,7 +77,11 @@ jobs:
       - name: Publier l'image (main uniquement)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-          IMAGE=ghcr.io/${{ github.repository }}/fraud-api
+          # Un nom de dépôt/image Docker doit être en minuscules — le nom du
+          # dépôt GitHub (${{ github.repository }}) ne l'est pas forcément
+          # (ex. "Detection-Fraude-"), ce qui avait fait échouer "docker push"
+          # instantanément (référence invalide) lors du run précédent.
+          IMAGE=ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')/fraud-api
           docker tag fraud-api:${{ github.sha }} $IMAGE:${{ github.sha }}
           docker tag fraud-api:${{ github.sha }} $IMAGE:latest
           docker push $IMAGE:${{ github.sha }}

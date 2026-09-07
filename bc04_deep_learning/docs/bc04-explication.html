@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>BC04 — Deep Learning</title>
+<style>
+  @page {
+    size: A4;
+    margin: 22mm 20mm 20mm 20mm;
+    @bottom-center {
+      content: "BC04 — Deep Learning · page " counter(page) " / " counter(pages);
+      font-family: Arial, sans-serif;
+      font-size: 8.5pt;
+      color: #6b7280;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 10.8pt;
+    line-height: 1.55;
+    color: #1c2230;
+  }
+
+  .cover { page-break-after: always; padding-top: 55mm; }
+  .cover .eyebrow {
+    font-family: Arial, sans-serif; font-size: 9.5pt; letter-spacing: 2px;
+    text-transform: uppercase; color: #1a5270; margin-bottom: 10mm;
+  }
+  .cover h1 {
+    font-family: Arial, sans-serif; font-size: 27pt; font-weight: 700;
+    color: #12212e; margin: 0 0 6mm; line-height: 1.2;
+  }
+  .cover .subtitle {
+    font-family: Georgia, serif; font-style: italic; font-size: 13pt;
+    color: #445064; max-width: 130mm; margin-bottom: 14mm;
+  }
+  .cover .meta-box {
+    border-left: 3px solid #1a5270; padding: 4mm 0 4mm 6mm;
+    font-family: Arial, sans-serif; font-size: 9.5pt; color: #3a4454; max-width: 120mm;
+  }
+  .cover .meta-box div { margin-bottom: 2mm; }
+  .cover .meta-box b { color: #12212e; }
+
+  h2 {
+    font-family: Arial, sans-serif; font-size: 15pt; font-weight: 700; color: #12212e;
+    border-bottom: 2px solid #1a5270; padding-bottom: 2mm; margin: 12mm 0 5mm;
+    page-break-after: avoid;
+  }
+  h2:first-of-type { margin-top: 0; }
+  h3 {
+    font-family: Arial, sans-serif; font-size: 11.5pt; font-weight: 700; color: #1a5270;
+    margin: 7mm 0 3mm; page-break-after: avoid;
+  }
+  p { margin: 0 0 3.2mm; text-align: justify; orphans: 3; widows: 3; }
+  strong { color: #12212e; }
+  code {
+    font-family: "Consolas", "Courier New", monospace; font-size: 9.3pt;
+    background: #eef1f6; color: #1a5270; padding: 0.5px 4px; border-radius: 3px;
+  }
+  ul, ol { margin: 0 0 3.5mm; padding-left: 5.5mm; }
+  li { margin-bottom: 1.6mm; text-align: justify; }
+
+  .callout {
+    background: #eef4f6; border-left: 3px solid #1a5270; padding: 3.5mm 5mm;
+    margin: 4mm 0 5mm; font-family: Arial, sans-serif; font-size: 9.6pt; color: #2a3444;
+  }
+  .callout b { color: #12212e; }
+  .callout.warn { background: #f8f1e6; border-left-color: #a8631f; }
+
+  table {
+    width: 100%; border-collapse: collapse; margin: 3mm 0 5mm;
+    font-family: Arial, sans-serif; font-size: 9pt;
+  }
+  th, td { border: 1px solid #d7dce4; padding: 2.2mm 3mm; text-align: left; vertical-align: top; }
+  th {
+    background: #1a5270; color: #ffffff; font-weight: 600; font-size: 8.6pt;
+    text-transform: uppercase; letter-spacing: .4px;
+  }
+  tr:nth-child(even) td { background: #f4f6f9; }
+  td code { font-size: 8.6pt; }
+  td.num { font-family: "Consolas", monospace; text-align: right; }
+  th.num { text-align: right; }
+
+  .stats-row { display: flex; gap: 4mm; margin: 4mm 0 6mm; }
+  .stat-tile {
+    flex: 1; border: 1px solid #d7dce4; border-radius: 2mm; padding: 3mm 3mm; text-align: center;
+  }
+  .stat-tile .n { font-family: Arial, sans-serif; font-weight: 700; font-size: 13.5pt; color: #1a5270; }
+  .stat-tile .k { font-family: Arial, sans-serif; font-size: 7.6pt; color: #5b6472; margin-top: 1mm; }
+
+  figure { margin: 4mm 0 6mm; page-break-inside: avoid; }
+  figure img { display: block; width: 100%; height: auto; border: 1px solid #d7dce4; border-radius: 2mm; }
+  figcaption { font-family: Arial, sans-serif; font-size: 8.4pt; color: #5b6472; margin-top: 2mm; text-align: center; }
+
+  .toc { margin-top: 10mm; font-family: Arial, sans-serif; font-size: 9.5pt; }
+  .toc-title { font-weight: 700; color: #12212e; margin-bottom: 3mm; font-size: 10.5pt; }
+  .toc ol { list-style: none; padding-left: 0; counter-reset: toc; }
+  .toc li { counter-increment: toc; margin-bottom: 1.8mm; color: #2a3444; }
+  .toc li::before { content: counter(toc) ". "; color: #1a5270; font-weight: 700; }
+
+  section { page-break-inside: avoid; }
+</style>
+</head>
+<body>
+
+<!-- ============================ COVER ============================ -->
+<div class="cover">
+  <div class="eyebrow">Détection de fraude bancaire — projet portfolio RNCP</div>
+  <h1>BC04 — Deep Learning<br>autoencodeur &amp; réseau de séquences</h1>
+  <p class="subtitle">
+    Deux approches qui ne voient pas la fraude comme le BC03 : un autoencodeur qui
+    n'apprend jamais le label, et un réseau récurrent qui reçoit l'historique
+    du client — pour savoir ce qu'elles apportent réellement, pas ce qu'on
+    espère qu'elles apportent.
+  </p>
+  <div class="meta-box">
+    <div><b>Bloc de compétences :</b> BC04 — Deep Learning</div>
+    <div><b>Source :</b> socle BC01/BC02/BC03 — <code>dwh.fact_transactions</code> (voie batch)</div>
+    <div><b>Modèles :</b> autoencodeur (Keras, non supervisé) · LSTM sur séquences (Keras)</div>
+    <div><b>Document :</b> note de modélisation et guide de lecture des résultats</div>
+  </div>
+
+  <div class="toc">
+    <div class="toc-title">Sommaire</div>
+    <ol>
+      <li>Objectif du bloc BC04</li>
+      <li>Argumentaire méthodologique</li>
+      <li>Autoencodeur — architecture et protocole</li>
+      <li>Résultats de l'autoencodeur</li>
+      <li>La limite des anomalies ponctuelles</li>
+      <li>Réseau de séquences — architecture et protocole</li>
+      <li>Résultats et comparaison avec le BC03</li>
+      <li>Pourquoi le contexte temporel n'apporte pas de gain ici</li>
+      <li>Synthèse et implications pour le BC05</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ============================ 1. OBJECTIF ============================ -->
+<h2>1. Objectif du bloc BC04</h2>
+
+<p>
+Les modèles du BC03 partagent une même hypothèse de travail : les fraudes qu'ils détectent
+ressemblent, au moins un peu, à celles qu'on leur a montrées pendant l'entraînement. C'est une
+hypothèse raisonnable, mais fragile — un fraudeur qui invente un mode opératoire réellement
+nouveau échappe par construction à un modèle qui n'a appris qu'à reconnaître des motifs déjà
+labellisés. Le BC04 explore deux façons de s'affranchir de cette dépendance au label ou à
+l'indépendance des transactions : un <strong>autoencodeur</strong>, qui apprend à quoi ressemble
+une transaction normale sans jamais voir le mot « fraude », et un <strong>réseau de neurones
+récurrent</strong>, qui reçoit l'historique récent d'un client plutôt qu'une transaction isolée.
+Les deux approches sont évaluées avec la même rigueur que le BC03 — split temporel, métriques
+adaptées au déséquilibre — pour mesurer ce qu'elles apportent réellement, y compris quand la
+réponse est « moins que prévu ».
+</p>
+
+<!-- ============================ 2. METHODO ============================ -->
+<h2>2. Argumentaire méthodologique</h2>
+
+<p>
+L'autoencodeur est entraîné selon un protocole strictement différent de tout ce qui précède dans
+ce projet : à aucun moment, ni pendant l'apprentissage ni pendant le calibrage du seuil de
+détection, le modèle n'a accès à la colonne <code>is_fraud</code>. Il apprend uniquement à
+compresser puis reconstruire des transactions <em>légitimes</em> du train ; le seuil d'alerte est
+lui-même calibré sur la distribution de l'erreur de reconstruction des seules transactions
+légitimes (percentile 99), jamais sur le comportement des fraudes du test. Les labels ne servent
+qu'à une chose : évaluer, a posteriori, si les transactions mal reconstruites sont effectivement
+des fraudes. C'est cette discipline qui donne sa valeur à l'exercice — un autoencodeur calibré en
+regardant les fraudes ne démontrerait rien sur sa capacité à généraliser à des fraudes inconnues.
+</p>
+<p>
+Le réseau de séquences part d'un constat inverse : les modèles du BC03 jugent chaque transaction
+indépendamment des autres, alors qu'un fraudeur agit dans le temps. Le modèle reçoit donc, pour
+chaque transaction à classer, une fenêtre glissante des <strong>L = 5</strong> dernières
+transactions du même client — la transaction à classer étant elle-même le dernier pas de la
+séquence, pas seulement son historique : elle porte l'essentiel du signal identifié aux BC02/BC03
+(montant, distance, canal, authentification), et l'exclure aurait privé le modèle de
+l'information la plus déterminante. Les variables catégorielles (canal, authentification,
+segment) sont apprises comme des <em>embeddings</em> plutôt qu'encodées en one-hot : plus
+compactes, elles laissent le réseau apprendre lui-même une représentation numérique adaptée à la
+tâche, au lieu d'une représentation binaire figée a priori.
+</p>
+
+<div class="callout">
+  <b>Une extrême prudence sur les poids de classe.</b> Le BC03 pondérait la classe fraude par un
+  facteur ≈ 66 (<code>scale_pos_weight</code>) sans difficulté, parce que le gradient boosting
+  applique cette pondération arbre par arbre sur l'ensemble du jeu de données. Appliqué tel quel à
+  un entraînement par mini-lots (Adam), ce même facteur produit des gradients disproportionnés dès
+  qu'un lot contient une fraude, et déstabilise l'apprentissage. Le réseau de séquences utilise
+  donc la racine carrée du ratio (≈ 8), un compromis usuel en deep learning entre rééquilibrage
+  effectif et stabilité numérique, complété par un écrêtage de gradient
+  (<code>clipnorm=1.0</code>).
+</div>
+
+<!-- ============================ 3. AE ARCHITECTURE ============================ -->
+<h2>3. Autoencodeur — architecture et protocole</h2>
+
+<p>
+L'architecture est volontairement simple : un encodeur à trois couches denses (12 → 6 → 3
+neurones, la couche à 3 neurones formant le goulot d'étranglement) suivi d'un décodeur symétrique
+(6 → 12 → 18, la dimension d'entrée). Les mêmes variables et le même prétraitement qu'au BC03
+(mise à l'échelle, encodage one-hot) alimentent le modèle. Sur 320 000 transactions
+d'entraînement, 315 221 sont légitimes : c'est sur ce seul sous-ensemble que l'autoencodeur est
+entraîné, avec 10 % conservés en validation pour l'arrêt anticipé.
+</p>
+
+<figure>
+  <img src="../outputs/01_ae_courbe_apprentissage.png" alt="Courbe d'apprentissage de l'autoencodeur : la perte de reconstruction décroît puis se stabilise, train et validation restant superposées">
+  <figcaption>Figure 1 — Convergence rapide et stable, sans écart entre train et validation : le modèle ne surapprend pas les 315 221 transactions légitimes.</figcaption>
+</figure>
+
+<!-- ============================ 4. AE RESULTATS ============================ -->
+<h2>4. Résultats de l'autoencodeur</h2>
+
+<p>
+Utilisée comme score continu, l'erreur de reconstruction atteint une AUC-ROC de 0,886 et une
+average precision de 0,414 — nettement en retrait des 0,998 et 0,921 du LightGBM du BC03. Ce n'est
+pas une surprise : le LightGBM a appris, label à l'appui, la forme exacte des six typologies de
+fraude simulées ; l'autoencodeur, lui, n'a appris qu'à reconnaître la normalité, et infère le
+reste. Au seuil calibré (percentile 99 de l'erreur sur les transactions légitimes du train), il
+détecte 45,3 % des fraudes du test avec une précision de 36,7 %.
+</p>
+
+<div class="stats-row">
+  <div class="stat-tile"><div class="n">0,886</div><div class="k">AUC-ROC (score = erreur de reconstruction)</div></div>
+  <div class="stat-tile"><div class="n">45,3 %</div><div class="k">rappel au seuil calibré</div></div>
+  <div class="stat-tile"><div class="n">36,7 %</div><div class="k">précision au seuil calibré</div></div>
+</div>
+
+<figure>
+  <img src="../outputs/02_ae_distribution_erreur.png" alt="Histogramme de l'erreur de reconstruction en échelle logarithmique, légitimes vs fraudes, avec le seuil d'anomalie marqué">
+  <figcaption>Figure 2 — Les fraudes s'étalent sur une longue traîne d'erreurs élevées, mais une part significative reste mêlée à la distribution légitime.</figcaption>
+</figure>
+
+<!-- ============================ 5. LIMITE ANOMALIES PONCTUELLES ============================ -->
+<h2>5. La limite des anomalies ponctuelles</h2>
+
+<p>
+Le taux de détection par typologie révèle une ligne de partage nette, et cohérente avec la nature
+même de la méthode. Un autoencodeur signale ce qui s'écarte statistiquement de la normalité
+globale — une <strong>anomalie ponctuelle</strong>. Il détecte donc quasi parfaitement
+<code>ingenierie_sociale</code> (99,1 %, des montants extrêmes) et <code>usurpation_identite</code>
+(93,6 %, une distance au domicile extrême), deux typologies dont la signature est justement une
+valeur individuellement rare. À l'inverse, il ne détecte <strong>aucune</strong> occurrence de
+<code>skimming</code> ni de <code>test_carte</code> : leurs montants, pris isolément, ne sont pas
+extraordinaires — un très petit ou moyen montant reste une valeur banale dans la distribution
+globale des transactions. Ce que le modèle ne voit pas, ce sont les <strong>anomalies
+contextuelles</strong> : une combinaison de valeurs individuellement plausibles, mais anormale
+dans son contexte (canal + heure + montant pris ensemble).
+</p>
+
+<figure>
+  <img src="../outputs/03_ae_detection_par_typologie.png" alt="Diagramme en barres du taux de détection de l'autoencodeur par typologie de fraude : quasi 100% pour ingenierie_sociale et usurpation_identite, 0% pour skimming et test_carte">
+  <figcaption>Figure 3 — Deux typologies quasi systématiquement détectées, deux totalement manquées : une frontière nette entre anomalie ponctuelle et anomalie contextuelle.</figcaption>
+</figure>
+
+<div class="callout warn">
+  <b>Ce que cela signifie en pratique.</b> Un autoencodeur seul ne remplace pas un modèle
+  supervisé — il le complète. Sa valeur ne se lit pas dans ses métriques globales, plus faibles,
+  mais dans sa capacité à signaler des transactions dont la forme même est inédite, y compris des
+  typologies qu'aucun historique labellisé n'a jamais décrites. C'est un filet de sécurité pour
+  l'inconnu, pas un remplaçant du modèle qui connaît déjà ses adversaires.
+</div>
+
+<!-- ============================ 6. LSTM ARCHITECTURE ============================ -->
+<h2>6. Réseau de séquences — architecture et protocole</h2>
+
+<p>
+380 000 séquences de longueur 5 sont construites à partir des 400 000 transactions batch (les
+clients disposant de moins de 5 transactions sur l'année ne peuvent former de séquence complète).
+Le modèle combine trois entrées par pas de temps — montant, distance au domicile et heure
+(normalisés), un embedding de canal (3 dimensions) et un embedding d'authentification (2
+dimensions) — résumées par une couche <strong>LSTM</strong> à 32 unités. Le segment client et le
+revenu mensuel, constants sur la séquence, sont injectés séparément après le LSTM plutôt que
+répétés à chaque pas de temps.
+</p>
+
+<table>
+<thead><tr><th>Paramètre</th><th>Valeur</th></tr></thead>
+<tbody>
+<tr><td>Longueur de séquence</td><td>5 transactions (la cible incluse)</td></tr>
+<tr><td>Séquences train / test</td><td>299 971 / 80 029 (split temporel identique au BC03)</td></tr>
+<tr><td>Poids de classe (fraude)</td><td>8,1 (racine carrée du ratio brut ≈ 66)</td></tr>
+<tr><td>Optimiseur</td><td>Adam, taux d'apprentissage 5.10⁻⁴, <code>clipnorm=1.0</code></td></tr>
+<tr><td>Arrêt</td><td>Anticipé sur l'AUC de validation (38 époques)</td></tr>
+</tbody>
+</table>
+
+<!-- ============================ 7. LSTM RESULTATS ============================ -->
+<h2>7. Résultats et comparaison avec le BC03</h2>
+
+<p>
+Réévalué sur EXACTEMENT le même sous-ensemble de transactions de test que le réseau de séquences
+(celles disposant d'un historique suffisant), le LightGBM du BC03 obtient une AUC-ROC de 0,998 et
+une average precision de 0,921. Le réseau de séquences atteint 0,997 et 0,897 — un écart minime,
+mais qui joue en défaveur du modèle censé apporter le contexte temporel. Les deux courbes se
+suivent presque trait pour trait.
+</p>
+
+<figure>
+  <img src="../outputs/05_lstm_vs_lgbm.png" alt="Courbes ROC et Précision/Rappel du LSTM et du LightGBM sur le même sous-ensemble de test, quasiment superposées">
+  <figcaption>Figure 4 — LSTM et LightGBM (BC03) sur les mêmes 80 029 transactions de test : des performances quasi identiques, LightGBM légèrement au-dessus.</figcaption>
+</figure>
+
+<table>
+<thead><tr><th>Modèle</th><th class="num">AUC-ROC</th><th class="num">Avg. Precision</th><th class="num">Précision @0,5</th><th class="num">Rappel @0,5</th><th class="num">F1 @0,5</th></tr></thead>
+<tbody>
+<tr><td>LSTM (séquences)</td><td class="num">0,997</td><td class="num">0,897</td><td class="num">54,3 %</td><td class="num">96,9 %</td><td class="num">0,696</td></tr>
+<tr><td>LightGBM (BC03, même test)</td><td class="num">0,998</td><td class="num">0,921</td><td class="num">60,9 %</td><td class="num">96,6 %</td><td class="num">0,747</td></tr>
+</tbody>
+</table>
+
+<p>
+La table de complémentarité, au seuil de 0,5, achève de préciser le tableau : sur 1 221 fraudes du
+test, 1 161 sont détectées par les deux modèles, 22 seulement par le LSTM, 19 seulement par le
+LightGBM, et 19 par aucun des deux. Les deux modèles sont donc très largement redondants —
+chacun rattrape une poignée de cas que l'autre manque, sans qu'aucun ne domine nettement l'autre
+sur cette poignée.
+</p>
+
+<!-- ============================ 8. POURQUOI PAS DE GAIN ============================ -->
+<h2>8. Pourquoi le contexte temporel n'apporte pas de gain ici</h2>
+
+<p>
+Ce résultat n'est pas un échec de l'architecture séquentielle : c'est une conséquence directe,
+et honnête à documenter, de la façon dont les données ont été simulées au BC01. Les six
+typologies de fraude y sont chacune définies par les attributs d'une <strong>unique</strong>
+transaction — un montant, une distance, une heure, un canal — jamais par une relation entre
+plusieurs transactions successives d'un même client. Un modèle séquentiel ne peut exploiter un
+signal temporel qui n'existe pas dans les données : il ne peut, au mieux, que retrouver le signal
+instantané déjà accessible à un modèle tabulaire, ce qui est précisément ce qu'on observe. La
+typologie <code>skimming</code> — décrite au BC01 comme une signature potentielle de
+<em>vélocité</em> (plusieurs petites transactions rapprochées) — est en réalité générée comme des
+transactions indépendantes les unes des autres, sans lien de cumul entre elles : le générateur
+actuel ne construit pas la rafale qui rendrait cette typologie identifiable par son contexte
+temporel.
+</p>
+
+<div class="callout">
+  <b>Piste d'amélioration pour le BC01.</b> Faire évoluer le générateur pour que
+  <code>skimming</code> produise une véritable rafale corrélée (plusieurs transactions du même
+  client en quelques minutes, cumul de montant croissant) donnerait au réseau de séquences un
+  signal réellement temporel à exploiter — et permettrait de mesurer, cette fois, un gain
+  authentique par rapport à un modèle par transaction indépendante. L'infrastructure de ce bloc
+  (construction de séquences, embeddings, LSTM) reste valable telle quelle ; c'est la donnée
+  d'entrée qui devrait évoluer.
+</div>
+
+<!-- ============================ 9. SYNTHESE ============================ -->
+<h2>9. Synthèse et implications pour le BC05</h2>
+
+<p>
+Le BC04 livre deux résultats complémentaires, tous deux mesurés plutôt que supposés. L'autoencodeur
+confirme qu'une approche non supervisée peut détecter une partie substantielle de la fraude —
+notamment ses formes les plus extrêmes — sans jamais avoir vu le label, ce qui en fait un filet de
+sécurité pertinent contre des typologies encore inconnues, à condition d'accepter qu'il rate
+structurellement les anomalies contextuelles plus discrètes. Le réseau de séquences, lui, démontre
+que l'architecture fonctionne (convergence stable, performance proche du meilleur modèle du BC03)
+mais qu'elle n'apporte pas ici de gain mesurable, pour une raison identifiée avec précision : le
+jeu de données ne contient pas de dépendance temporelle réelle à exploiter. Pour le BC05, le
+LightGBM du BC03 reste le modèle de référence pour le scoring en temps réel ; l'autoencodeur
+constitue un signal secondaire naturel — un score d'anomalie affiché à côté du score de fraude
+supervisé, plutôt qu'un remplacement — pour signaler à un analyste les transactions dont la forme
+sort de tout ce que les modèles ont appris à reconnaître.
+</p>
+
+</body>
+</html>

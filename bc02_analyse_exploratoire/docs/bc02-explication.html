@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>BC02 — Analyse exploratoire</title>
+<style>
+  @page {
+    size: A4;
+    margin: 22mm 20mm 20mm 20mm;
+    @bottom-center {
+      content: "BC02 — Analyse exploratoire · page " counter(page) " / " counter(pages);
+      font-family: Arial, sans-serif;
+      font-size: 8.5pt;
+      color: #6b7280;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 10.8pt;
+    line-height: 1.55;
+    color: #1c2230;
+  }
+
+  .cover { page-break-after: always; padding-top: 55mm; }
+  .cover .eyebrow {
+    font-family: Arial, sans-serif; font-size: 9.5pt; letter-spacing: 2px;
+    text-transform: uppercase; color: #1a5270; margin-bottom: 10mm;
+  }
+  .cover h1 {
+    font-family: Arial, sans-serif; font-size: 27pt; font-weight: 700;
+    color: #12212e; margin: 0 0 6mm; line-height: 1.2;
+  }
+  .cover .subtitle {
+    font-family: Georgia, serif; font-style: italic; font-size: 13pt;
+    color: #445064; max-width: 130mm; margin-bottom: 14mm;
+  }
+  .cover .meta-box {
+    border-left: 3px solid #1a5270; padding: 4mm 0 4mm 6mm;
+    font-family: Arial, sans-serif; font-size: 9.5pt; color: #3a4454; max-width: 120mm;
+  }
+  .cover .meta-box div { margin-bottom: 2mm; }
+  .cover .meta-box b { color: #12212e; }
+
+  h2 {
+    font-family: Arial, sans-serif; font-size: 15pt; font-weight: 700; color: #12212e;
+    border-bottom: 2px solid #1a5270; padding-bottom: 2mm; margin: 12mm 0 5mm;
+    page-break-after: avoid;
+  }
+  h2:first-of-type { margin-top: 0; }
+  h3 {
+    font-family: Arial, sans-serif; font-size: 11.5pt; font-weight: 700; color: #1a5270;
+    margin: 7mm 0 3mm; page-break-after: avoid;
+  }
+  p { margin: 0 0 3.2mm; text-align: justify; orphans: 3; widows: 3; }
+  strong { color: #12212e; }
+  code {
+    font-family: "Consolas", "Courier New", monospace; font-size: 9.3pt;
+    background: #eef1f6; color: #1a5270; padding: 0.5px 4px; border-radius: 3px;
+  }
+  ul, ol { margin: 0 0 3.5mm; padding-left: 5.5mm; }
+  li { margin-bottom: 1.6mm; text-align: justify; }
+
+  .callout {
+    background: #eef4f6; border-left: 3px solid #1a5270; padding: 3.5mm 5mm;
+    margin: 4mm 0 5mm; font-family: Arial, sans-serif; font-size: 9.6pt; color: #2a3444;
+  }
+  .callout b { color: #12212e; }
+  .callout.warn { background: #f8f1e6; border-left-color: #a8631f; }
+
+  table {
+    width: 100%; border-collapse: collapse; margin: 3mm 0 5mm;
+    font-family: Arial, sans-serif; font-size: 9pt;
+  }
+  th, td { border: 1px solid #d7dce4; padding: 2.2mm 3mm; text-align: left; vertical-align: top; }
+  th {
+    background: #1a5270; color: #ffffff; font-weight: 600; font-size: 8.6pt;
+    text-transform: uppercase; letter-spacing: .4px;
+  }
+  tr:nth-child(even) td { background: #f4f6f9; }
+  td code { font-size: 8.6pt; }
+  td.num { font-family: "Consolas", monospace; text-align: right; }
+  th.num { text-align: right; }
+
+  .stats-row { display: flex; gap: 4mm; margin: 4mm 0 6mm; }
+  .stat-tile {
+    flex: 1; border: 1px solid #d7dce4; border-radius: 2mm; padding: 3mm 3mm; text-align: center;
+  }
+  .stat-tile .n { font-family: Arial, sans-serif; font-weight: 700; font-size: 13.5pt; color: #1a5270; }
+  .stat-tile .k { font-family: Arial, sans-serif; font-size: 7.6pt; color: #5b6472; margin-top: 1mm; }
+
+  figure { margin: 4mm 0 6mm; page-break-inside: avoid; }
+  figure img { display: block; width: 100%; height: auto; border: 1px solid #d7dce4; border-radius: 2mm; }
+  figcaption { font-family: Arial, sans-serif; font-size: 8.4pt; color: #5b6472; margin-top: 2mm; text-align: center; }
+
+  .toc { margin-top: 10mm; font-family: Arial, sans-serif; font-size: 9.5pt; }
+  .toc-title { font-weight: 700; color: #12212e; margin-bottom: 3mm; font-size: 10.5pt; }
+  .toc ol { list-style: none; padding-left: 0; counter-reset: toc; }
+  .toc li { counter-increment: toc; margin-bottom: 1.8mm; color: #2a3444; }
+  .toc li::before { content: counter(toc) ". "; color: #1a5270; font-weight: 700; }
+
+  section { page-break-inside: avoid; }
+</style>
+</head>
+<body>
+
+<!-- ============================ COVER ============================ -->
+<div class="cover">
+  <div class="eyebrow">Détection de fraude bancaire — projet portfolio RNCP</div>
+  <h1>BC02 — Analyse exploratoire<br>déséquilibre, profiling &amp; anomalies</h1>
+  <p class="subtitle">
+    Ce que révèlent 400 000 transactions labellisées avant tout entraînement de modèle :
+    l'ampleur du déséquilibre de classes, le profil statistique des fraudeurs, et les limites
+    d'une détection fondée sur une seule variable à la fois.
+  </p>
+  <div class="meta-box">
+    <div><b>Bloc de compétences :</b> BC02 — Analyse exploratoire &amp; profiling</div>
+    <div><b>Source :</b> socle BC01 — <code>dwh.fact_transactions</code> (voie batch, labellisée)</div>
+    <div><b>Population analysée :</b> 400 000 transactions · 6 000 fraudes (1,50 %)</div>
+    <div><b>Document :</b> note d'analyse et guide de lecture des résultats</div>
+  </div>
+
+  <div class="toc">
+    <div class="toc-title">Sommaire</div>
+    <ol>
+      <li>Objectif du bloc BC02</li>
+      <li>Argumentaire méthodologique</li>
+      <li>Déséquilibre de classes</li>
+      <li>Profiling des fraudeurs</li>
+      <li>Statistiques descriptives</li>
+      <li>Détection d'anomalies univariées</li>
+      <li>Synthèse et implications pour le BC03</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ============================ 1. OBJECTIF ============================ -->
+<h2>1. Objectif du bloc BC02</h2>
+
+<p>
+Le bloc BC02 est la première lecture analytique du socle construit au BC01. Avant d'entraîner un
+quelconque modèle, il faut répondre à quatre questions qui conditionnent toutes les décisions
+techniques des blocs suivants : quelle est l'ampleur réelle du déséquilibre entre transactions
+légitimes et frauduleuses, quelles caractéristiques distinguent statistiquement un fraudeur d'un
+client normal, comment se comportent les variables numériques clés (montant, distance), et
+jusqu'où une méthode simple — regarder une seule variable à la fois — permet-elle déjà de
+détecter la fraude. Cette dernière question n'est pas accessoire : elle établit une base de
+comparaison objective (une <em>baseline</em>) qui permettra, au BC03, de mesurer l'apport réel
+d'un modèle supervisé multivarié plutôt que de le supposer.
+</p>
+<p>
+L'ensemble de l'analyse porte sur les <strong>400 000 transactions issues de la voie batch</strong>
+du socle BC01, à l'exclusion des transactions ingérées par le flux Kafka de démonstration : ces
+dernières ne portent pas encore de statut de fraude connu (<code>is_fraud IS NULL</code>), par
+construction du pipeline décrit au BC01. Mélanger les deux aurait faussé chaque taux calculé ici.
+</p>
+
+<!-- ============================ 2. METHODO ============================ -->
+<h2>2. Argumentaire méthodologique</h2>
+
+<p>
+Le choix de structurer l'analyse en quatre temps — déséquilibre, profiling, statistiques
+descriptives, anomalies univariées — suit une logique de complexité croissante délibérée. On
+commence par mesurer l'ampleur du problème (le déséquilibre), condition nécessaire pour
+interpréter correctement tout ce qui suit : un taux de détection de 95 % semble excellent dans
+l'absolu, mais devient trivial à atteindre dès lors que 98,5 % des transactions sont légitimes. On
+caractérise ensuite qui sont les fraudeurs dans les données (profiling), en calculant un taux de
+fraude conditionnel pour chaque dimension métier disponible plutôt qu'un simple coefficient de
+corrélation : un taux de fraude par canal ou par heure se lit et se présente directement à un
+public non technique (compliance, direction des risques), quand un coefficient statistique
+demande une traduction. On formalise ensuite ce constat visuel par des statistiques descriptives
+comparant explicitement les deux populations, avant de tester, en dernier lieu, si une règle
+fondée sur une seule variable suffirait déjà à détecter la fraude — ce qui revient à évaluer la
+valeur ajoutée réelle qu'un modèle multivarié devra apporter au BC03 pour se justifier.
+</p>
+<p>
+Pour cette dernière étape, deux méthodes univariées ont été appliquées sur le montant, et
+délibérément confrontées : le <strong>z-score</strong>, qui signale une transaction dès que son
+montant s'écarte de plus de trois écarts-types de la moyenne, et l'<strong>écart interquartile
+(IQR)</strong>, qui signale tout ce qui dépasse le troisième quartile de plus d'une fois et demie
+l'écart interquartile. Ces deux règles reposent sur une hypothèse implicite différente : le
+z-score suppose une distribution proche de la normale, l'IQR est conçu pour rester robuste face à
+une distribution asymétrique. Or le montant d'une transaction bancaire suit typiquement une loi
+log-normale, fortement asymétrique à droite — ce que les résultats de la section 5 confirment
+directement. Confronter les deux méthodes sur la même variable permet donc de mesurer très
+concrètement le coût d'une hypothèse de normalité mal choisie, plutôt que de l'affirmer en
+théorie.
+</p>
+
+<!-- ============================ 3. DESEQUILIBRE ============================ -->
+<h2>3. Déséquilibre de classes</h2>
+
+<p>
+Sur les 400 000 transactions analysées, 6 000 sont frauduleuses, soit un taux de
+<strong>1,50 %</strong> — une fraude pour 66 transactions légitimes. Ce chiffre se situe dans la
+fourchette réaliste de 0,3 % à 2 % évoquée par la littérature pour la fraude carte, et confirme
+que la génération synthétique du BC01 respecte bien la contrainte de déséquilibre extrême qui
+justifie, à elle seule, l'essentiel des choix méthodologiques du BC03 (SMOTE, pondération de
+classes, métriques adaptées au lieu de la simple exactitude).
+</p>
+
+<div class="stats-row">
+  <div class="stat-tile"><div class="n">400 000</div><div class="k">transactions analysées</div></div>
+  <div class="stat-tile"><div class="n">6 000</div><div class="k">fraudes (1,50 %)</div></div>
+  <div class="stat-tile"><div class="n">1 : 66</div><div class="k">déséquilibre de classes</div></div>
+</div>
+
+<figure>
+  <img src="../outputs/01_desequilibre_classes.png" alt="Diagramme en barres, échelle logarithmique, comparant 394 000 transactions légitimes à 6 000 fraudes">
+  <figcaption>Figure 1 — Répartition des classes (échelle logarithmique, sans quoi la barre des fraudes serait invisible).</figcaption>
+</figure>
+
+<div class="callout">
+  <b>Lecture.</b> L'échelle logarithmique n'est pas cosmétique : à échelle linéaire, la barre des
+  fraudes représenterait moins de deux pixels de hauteur sur la plupart des écrans — la meilleure
+  illustration visuelle du problème que pose ce déséquilibre à un modèle entraîné naïvement.
+</div>
+
+<!-- ============================ 4. PROFILING ============================ -->
+<h2>4. Profiling des fraudeurs</h2>
+
+<p>
+Le taux de fraude n'est pas uniforme : il varie fortement selon le canal, l'heure, la méthode
+d'authentification et la géographie de la transaction — c'est précisément ce que doit révéler un
+profiling. Le canal <strong>en ligne</strong> concentre le taux de fraude le plus élevé
+(2,43 %, contre 0,24 % pour un retrait au distributeur), et l'absence d'authentification
+(<code>none</code>) porte un taux de 5,56 %, contre 0,76 % pour une transaction validée par code
+PIN. Le résultat le plus frappant concerne l'heure : le taux de fraude culmine à
+<strong>33,05 % à 4 h du matin</strong> — une transaction sur trois à cette heure est frauduleuse,
+contre moins de 1 % en journée. Cette concentration nocturne recoupe directement trois des six
+typologies de fraude injectées au BC01 (<code>fraude_en_ligne</code>, <code>skimming</code>,
+<code>vol_carte_physique</code>), qui forcent statistiquement une fenêtre horaire 0h-6h.
+</p>
+
+<figure>
+  <img src="../outputs/02_profiling_fraudeurs.png" alt="Quatre graphiques : taux de fraude par canal, par heure, par méthode d'authentification et selon que le pays de la transaction est habituel ou non">
+  <figcaption>Figure 2 — Taux de fraude par canal, heure, authentification et géographie.</figcaption>
+</figure>
+
+<div class="callout warn">
+  <b>Point de vigilance.</b> Le taux de fraude atteint 100 % dès que le pays de la transaction
+  diffère du pays de résidence du client. Ce résultat n'est pas un signal métier généralisable :
+  il découle directement de la façon dont le générateur du BC01 construit les données — seules
+  deux typologies de fraude (<code>usurpation_identite</code>, <code>ingenierie_sociale</code>)
+  se voient attribuer un pays étranger, et aucune transaction légitime simulée n'en porte un. Un
+  jeu de données réel présenterait un recouvrement partiel (voyages, achats transfrontaliers
+  légitimes), pas une séparation parfaite. Ce résultat valide la cohérence interne du générateur
+  plutôt qu'il ne constitue une règle de détection transposable telle quelle.
+</div>
+
+<!-- ============================ 5. STATS DESC ============================ -->
+<h2>5. Statistiques descriptives</h2>
+
+<p>
+Le montant moyen d'une transaction frauduleuse (230,26 €) est plus de trois fois supérieur à
+celui d'une transaction légitime (67,54 €), mais cet écart de moyenne masque une réalité plus
+riche : la distribution du montant frauduleux est <strong>bimodale</strong>, avec une concentration
+de très petits montants (quelques euros, signature de la typologie <code>test_carte</code>, qui
+vérifie la validité d'une carte volée avant un usage frauduleux plus important) et une seconde
+concentration de montants élevés (plusieurs centaines d'euros, signatures
+<code>fraude_en_ligne</code> et <code>ingenierie_sociale</code>). La distribution légitime, elle,
+reste unimodale et régulière — c'est la signature classique d'une loi log-normale simple. Le même
+contraste se retrouve sur la distance au domicile : 13,65 km en moyenne pour une transaction
+légitime contre 173,95 km pour une fraude, avec une dispersion (écart-type) plus de trente fois
+supérieure côté fraude.
+</p>
+
+<figure>
+  <img src="../outputs/03_statistiques_descriptives.png" alt="Histogramme de la distribution du montant en échelle logarithmique, et diagramme en boîte de la distance au domicile, comparant transactions légitimes et frauduleuses">
+  <figcaption>Figure 3 — Distribution du montant (échelle log) et distance au domicile, légitimes vs fraudes.</figcaption>
+</figure>
+
+<table>
+<thead><tr><th>Variable</th><th>Population</th><th class="num">Moyenne</th><th class="num">Médiane</th><th class="num">Écart-type</th></tr></thead>
+<tbody>
+<tr><td rowspan="2">Montant (€)</td><td>Légitime</td><td class="num">67,54</td><td class="num">45,07</td><td class="num">75,16</td></tr>
+<tr><td>Fraude</td><td class="num">230,26</td><td class="num">52,41</td><td class="num">382,42</td></tr>
+<tr><td rowspan="2">Distance domicile (km)</td><td>Légitime</td><td class="num">13,65</td><td class="num">11,64</td><td class="num">10,17</td></tr>
+<tr><td>Fraude</td><td class="num">173,95</td><td class="num">19,64</td><td class="num">336,27</td></tr>
+</tbody>
+</table>
+
+<div class="callout">
+  <b>Lecture.</b> La médiane de la fraude (52,41 €) reste proche de celle des transactions
+  légitimes (45,07 €), alors que sa moyenne s'en écarte fortement : c'est la signature numérique
+  d'une distribution asymétrique tirée vers le haut par une minorité de montants extrêmes — la
+  moyenne seule serait ici trompeuse sans la médiane pour la contextualiser.
+</div>
+
+<!-- ============================ 6. ANOMALIES ============================ -->
+<h2>6. Détection d'anomalies univariées</h2>
+
+<p>
+Appliqué au seul montant, un détecteur par z-score (seuil de 3 écarts-types) signale 6 034
+transactions, dont 1 260 sont réellement frauduleuses : une <strong>précision de 20,9 %</strong>
+et un <strong>rappel de 21,0 %</strong> — quatre alertes sur cinq sont de fausses alertes, et
+moins d'une fraude sur cinq est détectée. La méthode IQR, plus permissive, signale près de cinq
+fois plus de transactions (28 924) et détecte un peu plus de fraudes en valeur absolue (1 790),
+mais au prix d'une précision qui chute à <strong>6,2 %</strong> : elle confirme, comme anticipé
+en section 2, qu'une règle conçue pour une distribution symétrique se dégrade fortement face à
+l'asymétrie réelle du montant, ici en générant une masse de faux positifs plutôt qu'en manquant
+les vraies fraudes.
+</p>
+<p>
+Le plafond de rappel observé — jamais au-delà de 30 %, quelle que soit la méthode — n'est pas un
+défaut de calibrage du seuil : il est structurel. Sur les six typologies de fraude injectées au
+BC01, seules deux (<code>fraude_en_ligne</code>, <code>ingenierie_sociale</code>) se distinguent
+par un montant significativement supérieur à la normale, et une troisième
+(<code>test_carte</code>) par un montant anormalement bas. Les trois typologies restantes
+(<code>usurpation_identite</code>, <code>skimming</code>, <code>vol_carte_physique</code>) ne
+portent aucune signature sur le montant : elles se manifestent par la distance, l'heure ou
+l'authentification. Aucune règle fondée sur le montant seul ne peut donc, par construction,
+détecter plus de la moitié des typologies de fraude — quel que soit le seuil choisi.
+</p>
+
+<figure>
+  <img src="../outputs/04_anomalies_univariees.png" alt="Nuage de points du montant par transaction avec les seuils z-score et IQR, montrant que la majorité des points de fraude se situent sous les deux seuils">
+  <figcaption>Figure 4 — Recouvrement entre les seuils d'anomalie univariée et la fraude réelle : la majorité des fraudes (points rouges) se situe sous les deux seuils.</figcaption>
+</figure>
+
+<table>
+<thead><tr><th>Détecteur</th><th class="num">Signalées</th><th class="num">Vrais positifs</th><th class="num">Précision</th><th class="num">Rappel</th><th class="num">F1</th></tr></thead>
+<tbody>
+<tr><td>Z-score (seuil = 3)</td><td class="num">6 034</td><td class="num">1 260</td><td class="num">20,9 %</td><td class="num">21,0 %</td><td class="num">0,209</td></tr>
+<tr><td>IQR (Q3 + 1,5×IQR)</td><td class="num">28 924</td><td class="num">1 790</td><td class="num">6,2 %</td><td class="num">29,8 %</td><td class="num">0,103</td></tr>
+</tbody>
+</table>
+
+<!-- ============================ 7. SYNTHESE ============================ -->
+<h2>7. Synthèse et implications pour le BC03</h2>
+
+<p>
+Trois enseignements se dégagent de ce bloc et engagent directement les choix du BC03. D'abord, le
+déséquilibre mesuré (1,50 %, soit 1 pour 66) confirme la nécessité d'une stratégie de
+rééquilibrage explicite (SMOTE ou pondération de classe) et interdit d'utiliser l'exactitude
+brute comme métrique d'évaluation — un modèle qui prédirait systématiquement « légitime »
+atteindrait déjà 98,5 % d'exactitude sans détecter une seule fraude. Ensuite, le profiling
+identifie un jeu de variables clairement porteuses de signal — canal, heure, authentification,
+distance au domicile — qui constitueront naturellement les features les plus importantes d'un
+modèle supervisé, avec la réserve méthodologique déjà posée sur la variable géographique.
+Enfin, et surtout, la détection univariée plafonne à un rappel de 30 % parce que la fraude
+simulée est <strong>multi-signature</strong> : c'est cette limite structurelle, mesurée
+précisément ici plutôt que supposée, qui justifie objectivement le passage à des modèles
+multivariés (Logistic Regression, Gradient Boosting) capables de combiner simultanément
+plusieurs variables faibles en un signal fort — l'objet même du BC03.
+</p>
+
+</body>
+</html>

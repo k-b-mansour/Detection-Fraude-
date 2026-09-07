@@ -1,0 +1,95 @@
+{
+  "desequilibre_classes": {
+    "n_total": 400000,
+    "n_fraud": 6000,
+    "n_legit": 394000,
+    "taux_fraude_pct": 1.5,
+    "ratio_1_pour": 66
+  },
+  "profiling_fraudeurs": {
+    "par_canal": {
+      "en_ligne": 2.43,
+      "puce": 1.5,
+      "sans_contact": 0.71,
+      "distributeur": 0.24
+    },
+    "par_authentification": {
+      "none": 5.56,
+      "3ds": 1.45,
+      "puce_pin": 0.76
+    },
+    "par_segment": {
+      "premium": 1.53,
+      "particulier": 1.5,
+      "professionnel": 1.42
+    },
+    "pays_habituel_pct": 1.05,
+    "pays_inhabituel_pct": 100.0,
+    "heure_pic_fraude": 4,
+    "taux_heure_pic": 33.05
+  },
+  "statistiques_descriptives": {
+    "montant": {
+      "False": {
+        "count": 394000.0,
+        "mean": 67.54,
+        "std": 75.16,
+        "min": 0.5,
+        "25%": 24.58,
+        "50%": 45.07,
+        "75%": 82.75,
+        "max": 2849.81
+      },
+      "True": {
+        "count": 6000.0,
+        "mean": 230.26,
+        "std": 382.42,
+        "min": 0.5,
+        "25%": 18.68,
+        "50%": 52.41,
+        "75%": 243.21,
+        "max": 2970.2
+      }
+    },
+    "distance_domicile_km": {
+      "False": {
+        "count": 394000.0,
+        "mean": 13.65,
+        "std": 10.17,
+        "min": 0.0,
+        "25%": 5.52,
+        "50%": 11.64,
+        "75%": 19.69,
+        "max": 76.4
+      },
+      "True": {
+        "count": 6000.0,
+        "mean": 173.95,
+        "std": 336.27,
+        "min": 0.0,
+        "25%": 8.43,
+        "50%": 19.64,
+        "75%": 152.23,
+        "max": 2054.75
+      }
+    }
+  },
+  "anomalies_univariees": {
+    "zscore_seuil_3": {
+      "n_signales": 6034,
+      "vrais_positifs": 1260,
+      "faux_positifs": 4774,
+      "precision": 0.209,
+      "recall": 0.21,
+      "f1": 0.209
+    },
+    "iqr_1_5": {
+      "n_signales": 28924,
+      "vrais_positifs": 1790,
+      "faux_positifs": 27134,
+      "precision": 0.062,
+      "recall": 0.298,
+      "f1": 0.103
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "score_predit": 1.0,
+  "valeurs_brutes": {
+    "montant": 131.61,
+    "distance_domicile_km": 175.22,
+    "revenu_mensuel_net": 2074.33,
+    "heure": "0",
+    "jour_semaine": "1",
+    "mois": "12",
+    "is_weekend": "0",
+    "is_nuit": "1",
+    "authentification": "puce_pin",
+    "canal": "sans_contact",
+    "segment": "particulier"
+  },
+  "top_contributions_shap": [
+    {
+      "feature": "distance_domicile_km",
+      "impact": 16.2583
+    },
+    {
+      "feature": "heure",
+      "impact": 6.0378
+    },
+    {
+      "feature": "authentification_puce_pin",
+      "impact": -0.3835
+    },
+    {
+      "feature": "revenu_mensuel_net",
+      "impact": -0.2475
+    },
+    {
+      "feature": "canal_en_ligne",
+      "impact": 0.2377
+    }
+  ]
+}

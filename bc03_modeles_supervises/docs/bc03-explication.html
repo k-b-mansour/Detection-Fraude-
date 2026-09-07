@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>BC03 — Modèles supervisés</title>
+<style>
+  @page {
+    size: A4;
+    margin: 22mm 20mm 20mm 20mm;
+    @bottom-center {
+      content: "BC03 — Modèles supervisés · page " counter(page) " / " counter(pages);
+      font-family: Arial, sans-serif;
+      font-size: 8.5pt;
+      color: #6b7280;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 10.8pt;
+    line-height: 1.55;
+    color: #1c2230;
+  }
+
+  .cover { page-break-after: always; padding-top: 55mm; }
+  .cover .eyebrow {
+    font-family: Arial, sans-serif; font-size: 9.5pt; letter-spacing: 2px;
+    text-transform: uppercase; color: #1a5270; margin-bottom: 10mm;
+  }
+  .cover h1 {
+    font-family: Arial, sans-serif; font-size: 27pt; font-weight: 700;
+    color: #12212e; margin: 0 0 6mm; line-height: 1.2;
+  }
+  .cover .subtitle {
+    font-family: Georgia, serif; font-style: italic; font-size: 13pt;
+    color: #445064; max-width: 130mm; margin-bottom: 14mm;
+  }
+  .cover .meta-box {
+    border-left: 3px solid #1a5270; padding: 4mm 0 4mm 6mm;
+    font-family: Arial, sans-serif; font-size: 9.5pt; color: #3a4454; max-width: 120mm;
+  }
+  .cover .meta-box div { margin-bottom: 2mm; }
+  .cover .meta-box b { color: #12212e; }
+
+  h2 {
+    font-family: Arial, sans-serif; font-size: 15pt; font-weight: 700; color: #12212e;
+    border-bottom: 2px solid #1a5270; padding-bottom: 2mm; margin: 12mm 0 5mm;
+    page-break-after: avoid;
+  }
+  h2:first-of-type { margin-top: 0; }
+  h3 {
+    font-family: Arial, sans-serif; font-size: 11.5pt; font-weight: 700; color: #1a5270;
+    margin: 7mm 0 3mm; page-break-after: avoid;
+  }
+  p { margin: 0 0 3.2mm; text-align: justify; orphans: 3; widows: 3; }
+  strong { color: #12212e; }
+  code {
+    font-family: "Consolas", "Courier New", monospace; font-size: 9.3pt;
+    background: #eef1f6; color: #1a5270; padding: 0.5px 4px; border-radius: 3px;
+  }
+  ul, ol { margin: 0 0 3.5mm; padding-left: 5.5mm; }
+  li { margin-bottom: 1.6mm; text-align: justify; }
+
+  .callout {
+    background: #eef4f6; border-left: 3px solid #1a5270; padding: 3.5mm 5mm;
+    margin: 4mm 0 5mm; font-family: Arial, sans-serif; font-size: 9.6pt; color: #2a3444;
+  }
+  .callout b { color: #12212e; }
+  .callout.warn { background: #f8f1e6; border-left-color: #a8631f; }
+
+  table {
+    width: 100%; border-collapse: collapse; margin: 3mm 0 5mm;
+    font-family: Arial, sans-serif; font-size: 9pt;
+  }
+  th, td { border: 1px solid #d7dce4; padding: 2.2mm 3mm; text-align: left; vertical-align: top; }
+  th {
+    background: #1a5270; color: #ffffff; font-weight: 600; font-size: 8.6pt;
+    text-transform: uppercase; letter-spacing: .4px;
+  }
+  tr:nth-child(even) td { background: #f4f6f9; }
+  td code { font-size: 8.6pt; }
+  td.num { font-family: "Consolas", monospace; text-align: right; }
+  th.num { text-align: right; }
+  tr.best td { background: #e6f1eb; font-weight: 600; }
+
+  .stats-row { display: flex; gap: 4mm; margin: 4mm 0 6mm; }
+  .stat-tile {
+    flex: 1; border: 1px solid #d7dce4; border-radius: 2mm; padding: 3mm 3mm; text-align: center;
+  }
+  .stat-tile .n { font-family: Arial, sans-serif; font-weight: 700; font-size: 13.5pt; color: #1a5270; }
+  .stat-tile .k { font-family: Arial, sans-serif; font-size: 7.6pt; color: #5b6472; margin-top: 1mm; }
+
+  figure { margin: 4mm 0 6mm; page-break-inside: avoid; }
+  figure img { display: block; width: 100%; height: auto; border: 1px solid #d7dce4; border-radius: 2mm; }
+  figcaption { font-family: Arial, sans-serif; font-size: 8.4pt; color: #5b6472; margin-top: 2mm; text-align: center; }
+
+  .toc { margin-top: 10mm; font-family: Arial, sans-serif; font-size: 9.5pt; }
+  .toc-title { font-weight: 700; color: #12212e; margin-bottom: 3mm; font-size: 10.5pt; }
+  .toc ol { list-style: none; padding-left: 0; counter-reset: toc; }
+  .toc li { counter-increment: toc; margin-bottom: 1.8mm; color: #2a3444; }
+  .toc li::before { content: counter(toc) ". "; color: #1a5270; font-weight: 700; }
+
+  section { page-break-inside: avoid; }
+</style>
+</head>
+<body>
+
+<!-- ============================ COVER ============================ -->
+<div class="cover">
+  <div class="eyebrow">Détection de fraude bancaire — projet portfolio RNCP</div>
+  <h1>BC03 — Modèles supervisés<br>SMOTE, LightGBM &amp; seuil de décision</h1>
+  <p class="subtitle">
+    De la régression logistique de référence au Gradient Boosting : ce que trois
+    configurations de modèle, évaluées sur un split temporel strict, révèlent sur
+    le rééquilibrage des classes et le choix du seuil de décision.
+  </p>
+  <div class="meta-box">
+    <div><b>Bloc de compétences :</b> BC03 — Modèles supervisés</div>
+    <div><b>Source :</b> socle BC01/BC02 — <code>dwh.fact_transactions</code> (voie batch)</div>
+    <div><b>Split :</b> temporel 80/20 — train jusqu'au 19/10/2025, test au-delà</div>
+    <div><b>Document :</b> note de modélisation et guide de lecture des résultats</div>
+  </div>
+
+  <div class="toc">
+    <div class="toc-title">Sommaire</div>
+    <ol>
+      <li>Objectif du bloc BC03</li>
+      <li>Argumentaire méthodologique</li>
+      <li>Trois configurations, un même protocole</li>
+      <li>Résultats comparés</li>
+      <li>L'effet de SMOTE sur la régression logistique</li>
+      <li>Optimisation du seuil de décision</li>
+      <li>Importance des variables et limites de lecture</li>
+      <li>Explicabilité SHAP — vision globale et décision individuelle</li>
+      <li>Synthèse et implications pour le BC04</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ============================ 1. OBJECTIF ============================ -->
+<h2>1. Objectif du bloc BC03</h2>
+
+<p>
+Le BC02 a mesuré, chiffres à l'appui, la limite d'une détection fondée sur une seule variable à
+la fois : au mieux 30 % de rappel, parce que la fraude simulée porte six signatures différentes
+qu'aucune variable isolée ne peut toutes capturer. Le BC03 répond directement à cette limite en
+entraînant des modèles capables de combiner plusieurs variables simultanément. Il poursuit trois
+objectifs concrets : établir une référence simple et interprétable (Logistic Regression),
+mesurer l'effet réel d'une technique de rééquilibrage des classes (SMOTE) plutôt que de le
+supposer bénéfique par principe, puis évaluer un modèle non linéaire plus expressif (Gradient
+Boosting via LightGBM) et déterminer le seuil de décision qui exploite au mieux ses prédictions.
+</p>
+
+<!-- ============================ 2. METHODO ============================ -->
+<h2>2. Argumentaire méthodologique</h2>
+
+<p>
+Le découpage entre données d'entraînement et données de test suit une logique
+<strong>temporelle</strong>, et non un tirage aléatoire : les 320 000 premières transactions
+chronologiques (jusqu'au 19 octobre 2025) servent à l'entraînement, les 80 000 suivantes à
+l'évaluation. Un tirage aléatoire classique aurait mélangé des transactions futures dans
+l'entraînement et des transactions passées dans le test, une forme de fuite d'information qui
+surestime systématiquement la performance mesurée par rapport à un déploiement réel, où le
+modèle ne voit jamais que le passé. Le taux de fraude reste stable entre les deux ensembles
+(1,49 % en train, 1,53 % en test), ce qui confirme que le split ne biaise pas la comparaison.
+</p>
+<p>
+Une variable identifiée au BC02 est délibérément exclue du jeu de features :
+<code>pays_transaction</code> (et son écart au pays de résidence). Ce couple s'est révélé être un
+séparateur parfait — 100 % de fraude dès que le pays diffère —, mais ce résultat est un artefact
+de la génération synthétique du BC01, pas un signal représentatif d'un cas réel. L'inclure
+donnerait un modèle artificiellement parfait sur ces données précises, sans aucune valeur
+démonstrative ni transférable. Cette exclusion est documentée ici précisément pour que le choix
+soit traçable, et non pour dissimuler une variable gênante.
+</p>
+<p>
+Deux métriques structurent la lecture des résultats en plus de l'AUC-ROC habituelle : le
+<strong>Gini</strong> (2×AUC − 1, une transformation directe de l'AUC-ROC, seuil de référence
+Bâle III à 0,65) et l'<strong>average precision</strong> (aire sous la courbe précision/rappel).
+Cette dernière est cruciale ici : sous un déséquilibre de 1,5 %, l'AUC-ROC reste presque
+saturée pour les trois modèles (0,983 à 0,998) et masque des écarts de performance réels — la
+section 4 le montre numériquement.
+</p>
+
+<!-- ============================ 3. CONFIGS ============================ -->
+<h2>3. Trois configurations, un même protocole</h2>
+
+<p>
+Les trois modèles partagent exactement le même jeu de variables (montant, distance au domicile,
+revenu mensuel, heure, jour de la semaine, mois, week-end, nuit, authentification, canal,
+segment) et le même prétraitement (mise à l'échelle des variables numériques, encodage one-hot
+des variables catégorielles), afin que seule la stratégie de modélisation diffère d'une
+configuration à l'autre.
+</p>
+
+<table>
+<thead><tr><th>Configuration</th><th>Gestion du déséquilibre</th><th>Principe</th></tr></thead>
+<tbody>
+<tr><td>Logistic Regression</td><td>Aucune</td><td>Référence linéaire, sans intervention sur les classes</td></tr>
+<tr><td>Logistic Regression + SMOTE</td><td>SMOTE, 30 % de la classe majoritaire</td><td>Sur-échantillonnage synthétique de la fraude, train uniquement</td></tr>
+<tr><td>LightGBM</td><td><code>scale_pos_weight</code> ≈ 66</td><td>Repondération native du gradient boosting, pas de SMOTE</td></tr>
+</tbody>
+</table>
+
+<div class="callout">
+  <b>Pourquoi ne pas appliquer SMOTE au LightGBM aussi ?</b> Un arbre de décision découpe l'espace
+  des variables en régions ; il tire peu de bénéfice d'un point synthétique interpolé entre deux
+  voisins, qui tombe presque toujours dans une région déjà bien caractérisée par les points
+  réels. À l'inverse, une repondération native (<code>scale_pos_weight</code>) agit directement
+  sur la fonction de perte à chaque itération de boosting, sans déformer la distribution des
+  données. SMOTE est réservé ici au modèle linéaire, pour lequel son effet est démontré en
+  section 5 — chaque technique est appliquée là où elle a un fondement, pas de façon uniforme.
+</div>
+
+<!-- ============================ 4. RESULTATS ============================ -->
+<h2>4. Résultats comparés</h2>
+
+<p>
+Les trois courbes ROC se superposent presque parfaitement (AUC de 0,983 à 0,998) — un artefact
+classique du déséquilibre extrême, où le taux de faux positifs reste mécaniquement bas même pour
+un modèle médiocre, simplement parce que la classe négative est écrasante. La courbe
+précision/rappel raconte une tout autre histoire : LightGBM atteint une <em>average precision</em>
+de 0,921, contre 0,670 pour la régression logistique seule et seulement 0,605 avec SMOTE. C'est
+cet écart-là qui reflète la performance réellement exploitable en production.
+</p>
+
+<figure>
+  <img src="../outputs/01_courbes_roc_pr.png" alt="Courbes ROC et Précision/Rappel comparant Logistic Regression, Logistic Regression avec SMOTE, et LightGBM">
+  <figcaption>Figure 1 — Courbe ROC (les trois modèles se ressemblent) et courbe Précision/Rappel (LightGBM se détache nettement).</figcaption>
+</figure>
+
+<table>
+<thead><tr><th>Modèle</th><th class="num">AUC-ROC</th><th class="num">Gini</th><th class="num">Avg. Precision</th><th class="num">Précision @0,5</th><th class="num">Rappel @0,5</th><th class="num">F1 @0,5</th></tr></thead>
+<tbody>
+<tr><td>Logistic Regression</td><td class="num">0,983</td><td class="num">0,967</td><td class="num">0,670</td><td class="num">80,0 %</td><td class="num">45,5 %</td><td class="num">0,580</td></tr>
+<tr><td>Logistic Regression + SMOTE</td><td class="num">0,984</td><td class="num">0,968</td><td class="num">0,605</td><td class="num">23,4 %</td><td class="num">86,6 %</td><td class="num">0,368</td></tr>
+<tr class="best"><td>LightGBM</td><td class="num">0,998</td><td class="num">0,997</td><td class="num">0,921</td><td class="num">60,9 %</td><td class="num">96,6 %</td><td class="num">0,747</td></tr>
+</tbody>
+</table>
+
+<div class="callout">
+  <b>Lecture.</b> Le Gini de LightGBM (0,997) dépasse très largement le seuil de 0,65 exigé par
+  Bâle III pour un score de risque bancaire ; celui de la régression logistique (0,967) le
+  dépasse également, ce qui confirme que le Gini seul, ici encore comme l'AUC-ROC, ne suffit pas
+  à départager les modèles sous un tel déséquilibre — l'average precision reste le juge de paix.
+</div>
+
+<!-- ============================ 5. SMOTE ============================ -->
+<h2>5. L'effet de SMOTE sur la régression logistique</h2>
+
+<p>
+Appliqué à la régression logistique, SMOTE produit exactement l'effet attendu en théorie : le
+rappel bondit de 45,5 % à 86,6 % — le modèle détecte presque deux fois plus de fraudes. Mais ce
+gain a un coût sévère : la précision s'effondre de 80,0 % à 23,4 %, si bien que le F1, qui
+résume les deux, <strong>baisse</strong> au lieu d'augmenter (0,580 → 0,368). SMOTE n'est donc
+pas une amélioration inconditionnelle : il déplace la frontière de décision vers la classe
+minoritaire, ce qui profite au rappel mais peut dégrader la précision plus qu'il ne compense —
+exactement ce que montre ce résultat, plutôt que de l'affirmer sans preuve.
+</p>
+
+<figure>
+  <img src="../outputs/02_effet_smote.png" alt="Diagramme en barres comparant précision, rappel et F1 de la régression logistique avec et sans SMOTE">
+  <figcaption>Figure 2 — SMOTE augmente le rappel mais fait chuter la précision : le F1 recule.</figcaption>
+</figure>
+
+<div class="callout warn">
+  <b>Point de vigilance.</b> Ce résultat ne signifie pas que SMOTE est une mauvaise technique en
+  général — il signifie qu'elle n'est pas systématiquement bénéfique, et que son effet doit être
+  mesuré sur le cas d'usage réel plutôt que présumé. Sur un modèle déjà capable de bien séparer
+  les classes (ici la régression logistique atteint 80 % de précision sans intervention), forcer
+  un rééquilibrage supplémentaire peut faire plus de mal que de bien.
+</div>
+
+<!-- ============================ 6. SEUIL ============================ -->
+<h2>6. Optimisation du seuil de décision</h2>
+
+<p>
+Un modèle de classification ne produit pas une décision binaire mais une probabilité ; le seuil
+au-delà duquel on la convertit en alerte est un choix distinct de l'entraînement du modèle. Au
+seuil par défaut de 0,50, LightGBM détecte 96,6 % des fraudes mais ne les concentre qu'à 60,9 %
+de précision — 758 fausses alertes pour 1 180 vraies fraudes détectées sur les 80 000
+transactions de test. En balayant systématiquement les seuils de 0,01 à 0,99 et en retenant celui
+qui maximise le F1, le seuil optimal se situe à <strong>0,98</strong> : la précision grimpe à
+88,5 %, au prix d'un rappel ramené à 76,8 % (938 fraudes détectées, 283 manquées, mais seulement
+122 fausses alertes).
+</p>
+
+<figure>
+  <img src="../outputs/03_optimisation_seuil.png" alt="Courbes de précision, rappel et F1 en fonction du seuil de décision, avec le seuil optimal à 0,98 marqué">
+  <figcaption>Figure 3 — Précision, rappel et F1 selon le seuil ; le F1 est maximal juste avant le décrochage du rappel.</figcaption>
+</figure>
+
+<figure>
+  <img src="../outputs/05_matrices_confusion.png" alt="Deux matrices de confusion comparant le seuil par défaut 0,50 et le seuil optimisé 0,98">
+  <figcaption>Figure 4 — Le seuil optimisé réduit les fausses alertes de 758 à 122, au prix de fraudes manquées passant de 41 à 283.</figcaption>
+</figure>
+
+<div class="callout warn">
+  <b>Le F1 n'est pas neutre.</b> Optimiser le seuil pour maximiser le F1 traite une fraude
+  manquée et une fausse alerte comme équivalentes. Or le contexte réglementaire posé en
+  introduction du projet impose un remboursement client sous 24h en cas de fraude avérée : le
+  coût d'une fraude manquée (perte financière directe, remboursement) dépasse en général très
+  largement celui d'une fausse alerte (une vérification client). Un seuil optimisé sur un coût
+  métier explicite — pas seulement sur le F1 — serait probablement inférieur à 0,98 en
+  production. Ce choix final relève d'une décision métier, formalisée au BC06, et non d'un
+  optimum purement statistique.
+</div>
+
+<!-- ============================ 7. FEATURE IMPORTANCE ============================ -->
+<h2>7. Importance des variables et limites de lecture</h2>
+
+<p>
+Le montant, la distance au domicile et le revenu mensuel net dominent le classement d'importance
+de LightGBM, loin devant les variables catégorielles (canal, authentification, segment). Cette
+hiérarchie doit être lue avec précaution : l'importance par gain de LightGBM favorise
+structurellement les variables numériques continues, qui offrent davantage de points de coupure
+possibles à chaque arbre, au détriment des variables encodées en one-hot, dont l'importance se
+fragmente entre plusieurs colonnes binaires. Le canal <code>en_ligne</code> et l'absence
+d'authentification, identifiés comme fortement discriminants au BC02 (taux de fraude de 2,43 %
+et 5,56 % respectivement), apparaissent ainsi moins bien classés ici qu'une lecture univariée ne
+le laisserait supposer — un écart méthodologique à garder en tête plutôt qu'une contradiction
+entre les deux blocs.
+</p>
+
+<figure>
+  <img src="../outputs/04_importance_features.png" alt="Diagramme en barres horizontales des 15 variables les plus importantes pour LightGBM, montrant la domination des variables numériques continues">
+  <figcaption>Figure 5 — Importance par gain LightGBM : les variables continues dominent, un biais connu de cette métrique.</figcaption>
+</figure>
+
+<!-- ============================ 8. SYNTHESE ============================ -->
+<h2>8. Explicabilité SHAP — vision globale et décision individuelle</h2>
+
+<p>
+L'importance par gain (section 7) répond à « quelles variables comptent », mais pas à « dans quel
+sens » ni « pourquoi cette transaction précise ». Les valeurs SHAP (SHapley Additive exPlanations)
+comblent les deux manques : elles décomposent chaque prédiction individuelle en une contribution
+signée par variable, dont la somme reconstitue exactement le score prédit. Agrégées sur un
+échantillon, elles redonnent une vue d'ensemble qui, cette fois, montre le sens de l'effet.
+</p>
+
+<figure>
+  <img src="../outputs/06_shap_summary.png" alt="Diagramme SHAP en essaim montrant, pour les principales variables, la distribution des contributions et leur sens selon la valeur de la variable">
+  <figcaption>Figure 6 — Impact SHAP par variable : chaque point est une transaction du test, sa couleur la valeur de la variable, sa position l'effet sur le score.</figcaption>
+</figure>
+
+<p>
+La lecture confirme et affine le profiling du BC02 : une <code>heure</code> faible (points bleus,
+c'est-à-dire tôt le matin) pousse fortement le score vers la fraude, une authentification
+<code>none</code> (points rouges) également, tandis qu'un <code>canal_distributeur</code> (points
+rouges pour cette variable binaire) pousse au contraire vers la légitimité — cohérent avec son
+taux de fraude le plus bas mesuré au BC02 (0,24 %). Le <code>montant</code> confirme sa
+distribution bimodale : des valeurs à la fois très hautes et très basses (nuances de rouge et de
+bleu aux deux extrémités du nuage) poussent vers la fraude, sa partie centrale reste neutre.
+</p>
+
+<div class="callout">
+  <b>RGPD Article 22.</b> Le règlement impose qu'une décision automatisée aux effets significatifs
+  soit explicable <em>au niveau de la décision elle-même</em>, pas seulement en moyenne sur un
+  portefeuille. C'est ce que permet le graphique en cascade (<em>waterfall</em>) ci-dessous, pour
+  une transaction précise plutôt que pour une tendance générale.
+</div>
+
+<p>
+La transaction retenue pour cet exemple est la fraude détectée avec la plus forte confiance du
+jeu de test (score prédit ≈ 1,000) : un paiement de 131,61 € par carte sans contact, à minuit,
+validé par code PIN, mais à <strong>175 km du domicile du client</strong> — soit 3,4 écarts-types
+au-dessus de la distance moyenne mesurée au BC02 (13,65 km). Le graphique ci-dessous exprime les
+contributions en échelle log-cote (avant transformation en probabilité par la fonction sigmoïde) :
+la distance au domicile contribue à elle seule pour +16,26, l'heure nocturne pour +6,04, tandis
+que l'authentification par code PIN atténue très légèrement le score (−0,38) sans suffire à
+compenser les deux premiers facteurs.
+</p>
+
+<figure>
+  <img src="../outputs/07_shap_decision_individuelle.png" alt="Graphique en cascade SHAP détaillant la contribution de chaque variable pour une transaction frauduleuse détectée avec un score de 1,000">
+  <figcaption>Figure 7 — Explication d'une décision individuelle : la distance au domicile et l'heure nocturne expliquent l'essentiel du score.</figcaption>
+</figure>
+
+<p>
+Cette transaction correspond très exactement à la signature <code>vol_carte_physique</code>
+définie au BC01 : une carte techniquement valide (code PIN correct) mais utilisée dans des
+conditions incompatibles avec le comportement habituel du client. C'est précisément le type
+d'explication — nommée, quantifiée, opposable — qu'une équipe conformité ou un client peut exiger
+en cas de blocage automatique de sa carte.
+</p>
+
+<h2>9. Synthèse et implications pour le BC04</h2>
+
+<p>
+Quatre conclusions structurent la suite du projet. D'abord, un modèle non linéaire capable de
+combiner les variables (LightGBM) apporte un gain net et mesuré par rapport à un modèle linéaire
+— l'average precision passe de 0,670 à 0,921 —, validant l'hypothèse posée en synthèse du BC02
+selon laquelle la fraude multi-signature exige une combinaison de variables plutôt qu'une règle
+isolée. Ensuite, ni le rééquilibrage des classes ni le choix du modèle ne dispensent d'une
+décision explicite sur le seuil : deux modèles avec un excellent AUC peuvent avoir des
+comportements opérationnels radicalement différents selon où l'on place la frontière de
+décision, et ce choix engage un arbitrage métier, pas seulement statistique. Par ailleurs, l'analyse
+SHAP démontre que le modèle retenu est explicable décision par décision, pas seulement en
+performance agrégée : cette capacité, adossée au modèle sauvegardé
+(<code>bc03_modeles_supervises/models/modele_lightgbm.joblib</code>), sera directement
+réutilisable par l'API de scoring du BC05 pour justifier chaque alerte en temps réel. Enfin, ce
+modèle reste un modèle à base d'arbres sur des variables tabulaires classiques, où chaque
+transaction est jugée indépendamment des autres : le BC04 explorera des approches complémentaires
+— autoencodeur pour la détection d'anomalies sans label, réseau de neurones sur des séquences de
+transactions — capables de capturer des dépendances temporelles qu'un modèle par transaction
+indépendante, comme ceux de ce bloc, ne voit structurellement pas.
+</p>
+
+</body>
+</html>

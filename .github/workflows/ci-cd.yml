@@ -1,0 +1,79 @@
+# BC05 — CI/CD de l'API de scoring.
+#
+# test        : à chaque push/PR — installe les dépendances de service
+#               (requirements-api.txt) et exécute les tests pytest de
+#               bc05_api_monitoring/tests/ contre le modèle versionné du BC03.
+# build-image : construit l'image Docker de l'API (valide le Dockerfile) ;
+#               ne la publie sur GHCR que sur un push vers main, jamais sur
+#               une pull request.
+#
+# Le modèle LightGBM (bc03_modeles_supervises/models/modele_lightgbm.joblib)
+# est versionné dans le dépôt pour ce projet portfolio — une chaîne MLOps de
+# production le récupérerait plutôt depuis un registre de modèles (MLflow,
+# etc.), hors périmètre de ce bloc.
+
+name: CI/CD — API de scoring (BC05)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: pip
+
+      - name: Installer les dépendances de service + tests
+        run: |
+          pip install -r bc05_api_monitoring/requirements-api.txt
+          pip install pytest==9.1.1 httpx==0.28.1
+
+      - name: Lancer les tests de l'API
+        run: pytest bc05_api_monitoring/tests/ -v
+
+  build-image:
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Construire l'image Docker de l'API
+        run: docker build -f bc05_api_monitoring/Dockerfile -t fraud-api:${{ github.sha }} .
+
+      - name: Vérifier que l'image démarre et répond sur /health
+        run: |
+          docker run -d --name fraud-api-ci -p 8000:8000 fraud-api:${{ github.sha }}
+          for i in $(seq 1 15); do
+            curl -sf http://localhost:8000/health && break
+            sleep 2
+          done
+          curl -sf http://localhost:8000/health
+          docker rm -f fraud-api-ci
+
+      - name: Connexion à GitHub Container Registry
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publier l'image (main uniquement)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          IMAGE=ghcr.io/${{ github.repository }}/fraud-api
+          docker tag fraud-api:${{ github.sha }} $IMAGE:${{ github.sha }}
+          docker tag fraud-api:${{ github.sha }} $IMAGE:latest
+          docker push $IMAGE:${{ github.sha }}
+          docker push $IMAGE:latest

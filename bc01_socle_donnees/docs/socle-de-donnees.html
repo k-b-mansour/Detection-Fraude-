@@ -1,0 +1,568 @@
+<!doctype html>
+<title>Socle de données BC01</title>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #f2f4f7;
+    --surface: #ffffff;
+    --panel: #eceff3;
+    --ink: #171b23;
+    --ink-soft: #5b6472;
+    --line: #d6dce4;
+    --line-soft: #e6eaef;
+
+    --accent: #164b60;
+    --accent-soft: #e2ecef;
+    --fraud: #a8631f;
+    --fraud-soft: #f7eede;
+    --danger: #a5433a;
+    --danger-soft: #f6e6e3;
+    --ok: #2f6b4f;
+    --ok-soft: #e6f1eb;
+
+    --shadow: 0 1px 2px rgba(23,27,35,.05), 0 8px 24px rgba(23,27,35,.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0e1217;
+      --surface: #171c24;
+      --panel: #1d232c;
+      --ink: #e7eaf1;
+      --ink-soft: #9aa3b4;
+      --line: #313a48;
+      --line-soft: #232a35;
+
+      --accent: #4a92ab;
+      --accent-soft: #1c2e34;
+      --fraud: #d99a4e;
+      --fraud-soft: #2e2416;
+      --danger: #d98077;
+      --danger-soft: #332220;
+      --ok: #5fae86;
+      --ok-soft: #16281f;
+
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0e1217;
+    --surface: #171c24;
+    --panel: #1d232c;
+    --ink: #e7eaf1;
+    --ink-soft: #9aa3b4;
+    --line: #313a48;
+    --line-soft: #232a35;
+
+    --accent: #4a92ab;
+    --accent-soft: #1c2e34;
+    --fraud: #d99a4e;
+    --fraud-soft: #2e2416;
+    --danger: #d98077;
+    --danger-soft: #332220;
+    --ok: #5fae86;
+    --ok-soft: #16281f;
+
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 52px 24px 76px; }
+
+  .eyebrow {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: .72rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 12px;
+  }
+  h1 {
+    font-size: clamp(1.8rem, 1.1rem + 2.8vw, 2.5rem);
+    font-weight: 600;
+    letter-spacing: -.02em;
+    line-height: 1.12;
+    text-wrap: balance;
+    margin: 0 0 16px;
+  }
+  .lede {
+    font-size: 1.08rem;
+    color: var(--ink-soft);
+    max-width: 68ch;
+    margin: 0 0 24px;
+  }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px 10px; font-family: "IBM Plex Mono", monospace; font-size: .76rem; }
+  .meta span { border: 1px solid var(--line); border-radius: 4px; padding: 4px 9px; color: var(--ink-soft); background: var(--surface); }
+
+  section { margin-top: 52px; }
+  h2 { font-size: 1.24rem; font-weight: 600; letter-spacing: -.01em; margin: 0 0 6px; }
+  .sub { color: var(--ink-soft); font-size: .95rem; max-width: 70ch; margin: 0 0 20px; }
+
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; box-shadow: var(--shadow); overflow: hidden; }
+  .fig { margin: 0; }
+  .fig .scroll { overflow-x: auto; padding: 22px; }
+  .fig svg { display: block; width: 100%; min-width: 720px; height: auto; }
+  figcaption { border-top: 1px solid var(--line-soft); padding: 13px 22px 15px; font-size: .89rem; color: var(--ink-soft); }
+  figcaption b { color: var(--ink); font-weight: 600; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 18px; padding: 13px 22px; border-top: 1px solid var(--line-soft); font-family: "IBM Plex Mono", monospace; font-size: .72rem; color: var(--ink-soft); }
+  .legend i { display: inline-flex; align-items: center; gap: 7px; font-style: normal; }
+  .legend svg { width: 28px; height: 12px; flex: none; }
+  .legend .sw { width: 12px; height: 12px; border-radius: 3px; border: 1.5px solid; flex: none; }
+
+  .diagram { color: var(--ink); }
+  .d-box    { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; }
+  .d-panel  { fill: var(--panel);   stroke: var(--line); stroke-width: 1.5; }
+  .d-accent { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 2; }
+  .d-fraud  { fill: var(--fraud-soft);  stroke: var(--fraud);  stroke-width: 1.75; }
+  .d-danger { fill: var(--danger-soft); stroke: var(--danger); stroke-width: 1.75; }
+  .t   { fill: var(--ink); font-family: "IBM Plex Mono", monospace; font-size: 12.5px; font-weight: 500; }
+  .t-s { fill: var(--ink-soft); font-family: "IBM Plex Mono", monospace; font-size: 10px; }
+  .t-a { fill: var(--accent); font-family: "IBM Plex Mono", monospace; font-size: 12.5px; font-weight: 500; }
+  .t-f { fill: var(--fraud); font-family: "IBM Plex Mono", monospace; font-size: 10px; font-weight: 500; }
+  .lbl   { fill: var(--ink-soft); font-family: "IBM Plex Mono", monospace; font-size: 10px; }
+  .lbl-d { fill: var(--danger);   font-family: "IBM Plex Mono", monospace; font-size: 10px; }
+  .flow   { stroke: var(--ink-soft); stroke-width: 1.5; fill: none; }
+  .flow-s { stroke: var(--ink-soft); stroke-width: 1.5; fill: none; stroke-dasharray: 5 4; }
+  .flow-a { stroke: var(--accent); stroke-width: 2.1; fill: none; }
+  .flow-d { stroke: var(--danger); stroke-width: 1.5; fill: none; stroke-dasharray: 5 4; }
+  .flow-t { stroke: var(--ink-soft); stroke-width: 1.1; fill: none; stroke-dasharray: 2 3; opacity: .75; }
+  .thin   { stroke: var(--line); stroke-width: 1.25; fill: none; }
+  .thin-d { stroke: var(--line); stroke-width: 1.25; fill: none; stroke-dasharray: 4 3; }
+  .mk-ink { fill: var(--ink-soft); }
+  .mk-a   { fill: var(--accent); }
+  .mk-d   { fill: var(--danger); }
+
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .stat { background: var(--surface); padding: 18px 20px; }
+  .stat .n { font-family: "IBM Plex Mono", monospace; font-size: 1.5rem; font-weight: 500; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+  .stat .k { font-size: .8rem; color: var(--ink-soft); margin-top: 4px; }
+
+  .tbl-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
+  table { border-collapse: collapse; width: 100%; min-width: 560px; background: var(--surface); }
+  th, td { text-align: left; padding: 12px 16px; border-bottom: 1px solid var(--line-soft); vertical-align: top; font-size: .92rem; }
+  thead th { font-family: "IBM Plex Mono", monospace; font-size: .7rem; letter-spacing: .09em; text-transform: uppercase; color: var(--ink-soft); background: var(--panel); }
+  tbody tr:last-child td { border-bottom: 0; }
+  td:first-child { font-weight: 600; white-space: nowrap; }
+  td code { font-family: "IBM Plex Mono", monospace; font-size: .86em; background: var(--accent-soft); color: var(--accent); padding: 1px 5px; border-radius: 3px; }
+  .pill { display: inline-flex; align-items: center; gap: 5px; font-family: "IBM Plex Mono", monospace; font-size: .74rem; font-weight: 600; padding: 2px 9px; border-radius: 20px; }
+  .pill.ok { background: var(--ok-soft); color: var(--ok); }
+  td.num { font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; color: var(--ink-soft); white-space: nowrap; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips span { font-family: "IBM Plex Mono", monospace; font-size: .78rem; border: 1px solid var(--line); background: var(--surface); border-radius: 5px; padding: 6px 11px; }
+
+  .note { margin-top: 40px; border-left: 3px solid var(--accent); padding: 4px 0 4px 18px; color: var(--ink-soft); font-size: .91rem; max-width: 76ch; }
+  .note b { color: var(--ink); }
+
+  @media (max-width: 600px) {
+    .wrap { padding: 36px 16px 60px; }
+    .fig .scroll { padding: 14px; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow">Détection de fraude bancaire · Bloc A — BC01</p>
+    <h1>Socle de données anti-fraude</h1>
+    <p class="lede">
+      L'entrepôt et sa chaîne d'alimentation : une seule fonction de transformation SQL,
+      alimentée aussi bien par une génération de masse que par un flux Kafka simulé —
+      les deux voies ne peuvent pas diverger.
+    </p>
+    <div class="meta">
+      <span>Données simulées · 5 000 clients · 400 000 transactions</span>
+      <span>PostgreSQL 15 · Redis 7 · Kafka 3.8 (KRaft)</span>
+      <span>Python 3.10 · Docker Compose</span>
+    </div>
+  </header>
+
+  <!-- ============================ FIGURE 1 ============================ -->
+  <section>
+    <h2>Flux de bout en bout</h2>
+    <p class="sub">
+      Deux origines indépendantes, une seule porte d'entrée du modèle dimensionnel : la table
+      de staging. Un message Kafka invalide part en DLQ au lieu de bloquer le flux ; un
+      horodatage hors de la période simulée se rattache au membre « Inconnu » plutôt que
+      d'être perdu.
+    </p>
+
+    <figure class="fig card">
+      <div class="scroll">
+        <svg class="diagram" viewBox="0 0 1320 700" role="img"
+             aria-label="Deux voies d'ingestion. La voie batch : seed.py charge directement la table de staging. La voie streaming : producer.py publie sur le topic Kafka transactions.raw, consumer.py lit par micro-lots, valide le schéma JSON (un message invalide part vers transactions.dlq), déduplique via Redis puis écrit dans la même table de staging et met à jour des compteurs Redis après succès. Les deux voies convergent vers dwh.charger_faits_transactions, qui résout les dimensions (jointure stricte sur le client, repli sur un membre Inconnu pour le temps et le canal) et écrit dans dwh.fact_transactions. Les vues mart alimentent les blocs BC02 à BC06. Le schéma ops journalise les chargements et les contrôles qualité en observant staging, la transformation et le schéma en étoile.">
+          <defs>
+            <marker id="ar" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk-ink"/></marker>
+            <marker id="arA" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7.5" markerHeight="7.5" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk-a"/></marker>
+            <marker id="arD" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk-d"/></marker>
+          </defs>
+
+          <text class="lbl" x="60" y="120" letter-spacing="1.4">VOIE BATCH — génération directe</text>
+          <text class="lbl" x="60" y="350" letter-spacing="1.4">VOIE STREAM — ingestion temps réel</text>
+
+          <!-- BATCH origin -->
+          <rect class="d-box" x="60" y="150" width="230" height="72" rx="7"/>
+          <text class="t" x="175" y="178" text-anchor="middle">seed.py</text>
+          <text class="t-s" x="175" y="197" text-anchor="middle">génération vectorisée (numpy)</text>
+          <text class="t-s" x="175" y="212" text-anchor="middle">clé bk : TX-000000001…</text>
+
+          <!-- STAGING (shared landing) -->
+          <rect class="d-box" x="772" y="150" width="210" height="72" rx="7"/>
+          <text class="t" x="877" y="178" text-anchor="middle">staging.raw_transactions</text>
+          <text class="t-s" x="877" y="197" text-anchor="middle">traite = FALSE au départ</text>
+          <text class="t-s" x="877" y="212" text-anchor="middle">mode_ingestion : batch | stream</text>
+
+          <!-- STREAM origin -->
+          <rect class="d-box" x="60" y="376" width="170" height="70" rx="7"/>
+          <text class="t" x="145" y="401" text-anchor="middle">producer.py</text>
+          <text class="t-s" x="145" y="419" text-anchor="middle">bk généré ici</text>
+          <text class="t-s" x="145" y="433" text-anchor="middle">enable.idempotence</text>
+
+          <!-- Kafka cylinder -->
+          <path class="d-box" d="M268,372 a52,9 0 0 1 104,0 v78 a52,9 0 0 1 -104,0 z"/>
+          <path class="thin" d="M268,372 a52,9 0 0 0 104,0"/>
+          <text class="t" x="320" y="406" text-anchor="middle">Kafka</text>
+          <text class="t-s" x="320" y="423" text-anchor="middle">transactions.raw</text>
+          <text class="t-s" x="320" y="437" text-anchor="middle">1 broker · KRaft</text>
+
+          <!-- consumer -->
+          <rect class="d-box" x="410" y="376" width="220" height="86" rx="7"/>
+          <text class="t" x="520" y="399" text-anchor="middle">consumer.py</text>
+          <text class="t-s" x="520" y="416" text-anchor="middle">valider JSON → dédup Redis</text>
+          <text class="t-s" x="520" y="431" text-anchor="middle">micro-lot 200 / 2 s</text>
+          <text class="t-s" x="520" y="446" text-anchor="middle">commit offset après écriture</text>
+
+          <!-- DLQ -->
+          <rect class="d-danger" x="410" y="494" width="220" height="58" rx="7"/>
+          <text class="t" x="520" y="517" text-anchor="middle">transactions.dlq</text>
+          <text class="t-s" x="520" y="534" text-anchor="middle">JSON invalide / champ manquant</text>
+
+          <!-- Redis -->
+          <rect class="d-box" x="660" y="486" width="210" height="74" rx="7"/>
+          <text class="t" x="765" y="510" text-anchor="middle">Redis</text>
+          <text class="t-s" x="765" y="528" text-anchor="middle">dedup:{bk} · TTL 24 h</text>
+          <text class="t-s" x="765" y="542" text-anchor="middle">nb_tx_1h · montant_cumul_1h</text>
+
+          <!-- XFORM (shared) -->
+          <rect class="d-accent" x="762" y="256" width="230" height="96" rx="7"/>
+          <text class="t-a" x="877" y="284" text-anchor="middle">dwh.charger_faits_transactions()</text>
+          <text class="t-s" x="877" y="303" text-anchor="middle">porte unique batch + stream</text>
+          <text class="t-s" x="877" y="318" text-anchor="middle">client strict · temps/canal → Inconnu</text>
+          <text class="t-s" x="877" y="333" text-anchor="middle">ON CONFLICT (transaction_bk)</text>
+
+          <!-- STAR wrap -->
+          <rect class="d-panel" x="1044" y="118" width="256" height="304" rx="9"/>
+          <text class="lbl" x="1172" y="138" text-anchor="middle" letter-spacing="1.1">dwh — SCHÉMA EN ÉTOILE</text>
+
+          <rect class="d-accent" x="1108" y="214" width="136" height="88" rx="6"/>
+          <text class="t-a" x="1176" y="240" text-anchor="middle">fact_transactions</text>
+          <text class="t-s" x="1176" y="257" text-anchor="middle">grain : 1 transaction</text>
+          <text class="t-f" x="1176" y="272" text-anchor="middle">is_fraud / fraud_type (null)</text>
+          <text class="t-s" x="1176" y="287" text-anchor="middle">mode_ingestion</text>
+
+          <rect class="d-box" x="1060" y="150" width="112" height="40" rx="5"/>
+          <text class="t-s" x="1116" y="174" text-anchor="middle">dim_clients</text>
+          <rect class="d-box" x="1180" y="150" width="112" height="46" rx="5"/>
+          <text class="t-s" x="1236" y="170" text-anchor="middle">dim_temps</text>
+          <text class="t-f" x="1236" y="184" text-anchor="middle">+ membre Inconnu</text>
+          <rect class="d-box" x="1060" y="356" width="112" height="46" rx="5"/>
+          <text class="t-s" x="1116" y="376" text-anchor="middle">dim_agences</text>
+          <text class="t-s" x="1116" y="390" text-anchor="middle">attribut du client</text>
+          <rect class="d-box" x="1180" y="356" width="112" height="46" rx="5"/>
+          <text class="t-s" x="1236" y="376" text-anchor="middle">dim_canal</text>
+          <text class="t-f" x="1236" y="390" text-anchor="middle">+ membre Inconnu</text>
+
+          <line class="thin" x1="1116" y1="190" x2="1140" y2="214"/>
+          <line class="thin" x1="1236" y1="196" x2="1212" y2="214"/>
+          <line class="thin" x1="1236" y1="356" x2="1212" y2="302"/>
+          <line class="thin-d" x1="1116" y1="356" x2="1116" y2="190"/>
+
+          <!-- MART -->
+          <rect class="d-box" x="1044" y="440" width="256" height="56" rx="7"/>
+          <text class="t" x="1172" y="463" text-anchor="middle">mart.v_*</text>
+          <text class="t-s" x="1172" y="480" text-anchor="middle">KPIs · profil horaire · top fraude</text>
+
+          <!-- BC list -->
+          <rect class="d-panel" x="1044" y="512" width="256" height="150" rx="9"/>
+          <text class="lbl" x="1062" y="534" letter-spacing="1.1">CONSOMMATEURS</text>
+          <text class="t-s" x="1062" y="556">BC02 · analyse &amp; profiling</text>
+          <text class="t-s" x="1062" y="577">BC03 · modèles supervisés</text>
+          <text class="t-s" x="1062" y="598">BC04 · autoencodeurs</text>
+          <text class="t-s" x="1062" y="619">BC05 · API temps réel</text>
+          <text class="t-s" x="1062" y="640">BC06 · KPIs &amp; conformité</text>
+
+          <!-- OPS rail -->
+          <rect class="d-panel" x="290" y="614" width="660" height="56" rx="7"/>
+          <text class="t-s" x="310" y="638">ops.log_chargement</text>
+          <text class="lbl" x="310" y="654">audit ETL — source, mode, durée, statut</text>
+          <line class="thin" x1="620" y1="622" x2="620" y2="662"/>
+          <text class="t-s" x="640" y="638">ops.controle_qualite</text>
+          <text class="lbl" x="640" y="654">10 contrôles — complétude · intégrité · plausibilité</text>
+
+          <!-- ===== ARROWS ===== -->
+          <path class="flow" marker-end="url(#ar)" d="M290,186 L772,186"/>
+          <text class="lbl" x="440" y="177">COPY (batch)</text>
+
+          <path class="flow-s" marker-end="url(#ar)" d="M230,411 L268,411"/>
+          <text class="lbl" x="234" y="401">produce</text>
+          <path class="flow-s" marker-end="url(#ar)" d="M372,411 L410,411"/>
+          <text class="lbl" x="378" y="401">poll</text>
+
+          <path class="flow-d" marker-end="url(#arD)" d="M520,462 L520,494"/>
+          <text class="lbl-d" x="530" y="482">schéma KO</text>
+
+          <path class="flow-s" marker-end="url(#ar)" d="M630,392 L692,392 L692,205 L772,205"/>
+          <text class="lbl" x="700" y="360">micro-lot</text>
+          <text class="lbl" x="700" y="374">ON CONFLICT</text>
+
+          <path class="flow-s" marker-end="url(#ar)" d="M622,455 L660,505"/>
+          <text class="lbl" x="626" y="490">après succès</text>
+
+          <path class="flow" marker-end="url(#ar)" d="M877,222 L877,256"/>
+
+          <path class="flow-a" marker-end="url(#arA)" d="M992,296 L1108,254"/>
+          <text class="t-a" x="998" y="272" font-size="10.5">INSERT fact</text>
+
+          <path class="flow" marker-end="url(#ar)" d="M1172,422 L1172,440"/>
+          <path class="flow" marker-end="url(#ar)" d="M1172,496 L1172,512"/>
+          <text class="lbl" x="1182" y="507">consommé par</text>
+
+          <path class="flow-s" marker-end="url(#ar)" d="M870,516 L1044,552"/>
+          <text class="lbl" x="880" y="540">temps réel</text>
+
+          <path class="flow-t" marker-end="url(#ar)" d="M792,222 L580,614"/>
+          <text class="lbl" x="600" y="500">journalise</text>
+          <path class="flow-t" marker-end="url(#ar)" d="M980,352 L900,614"/>
+          <text class="lbl" x="930" y="450">contrôles</text>
+          <path class="flow-t" marker-end="url(#ar)" d="M1050,422 L840,614"/>
+          <text class="lbl" x="905" y="555">contrôles</text>
+        </svg>
+      </div>
+
+      <div class="legend">
+        <i><svg viewBox="0 0 30 12"><line x1="1" y1="6" x2="24" y2="6" stroke="var(--ink-soft)" stroke-width="1.5"/><path d="M22 2l6 4-6 4z" fill="var(--ink-soft)"/></svg> flux batch</i>
+        <i><svg viewBox="0 0 30 12"><line x1="1" y1="6" x2="24" y2="6" stroke="var(--ink-soft)" stroke-width="1.5" stroke-dasharray="4 3"/><path d="M22 2l6 4-6 4z" fill="var(--ink-soft)"/></svg> flux streaming</i>
+        <i><span class="sw" style="border-color:var(--accent);background:var(--accent-soft)"></span> transformation SQL partagée</i>
+        <i><span class="sw" style="border-color:var(--fraud);background:var(--fraud-soft)"></span> lié au statut de fraude / membre Inconnu</i>
+        <i><span class="sw" style="border-color:var(--danger);background:var(--danger-soft)"></span> file de rejets (DLQ)</i>
+      </div>
+
+      <figcaption>
+        <b>Une seule logique, deux débits.</b> Le chargement batch écrit en staging en une passe ;
+        le consumer Kafka applique les <em>mêmes</em> règles sur des micro-lots. Idempotence
+        garantie des deux côtés : rejouer un chargement déjà traité n'insère aucun doublon.
+      </figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================ STATS ============================ -->
+  <section>
+    <h2>Ce que le socle donne à voir</h2>
+    <p class="sub">Indicateurs produits par <code>mart.v_kpis_globaux</code> et <code>scripts/quality_checks.py</code> sur le dernier chargement complet.</p>
+    <div class="stats">
+      <div class="stat"><div class="n">400 000</div><div class="k">transactions ingérées (batch)</div></div>
+      <div class="stat"><div class="n">6 000</div><div class="k">fraudes — 1,50 %</div></div>
+      <div class="stat"><div class="n">1 : 67</div><div class="k">déséquilibre de classes</div></div>
+      <div class="stat"><div class="n">10 / 10</div><div class="k">contrôles qualité au vert</div></div>
+      <div class="stat"><div class="n">≈ 2 min</div><div class="k">reconstruction complète (400k lignes)</div></div>
+      <div class="stat"><div class="n">6</div><div class="k">typologies de fraude simulées</div></div>
+    </div>
+  </section>
+
+  <!-- ============================ FIGURE 2 ============================ -->
+  <section>
+    <h2>Schéma en étoile</h2>
+    <p class="sub">
+      L'agence est un attribut du client (agence gestionnaire du compte), pas de la transaction —
+      une transaction carte ne transite pas par une agence physique. <code>dim_temps</code> et
+      <code>dim_canal</code> portent chacune un membre « Inconnu » (clé 0) pour ne jamais laisser
+      une transaction streaming sans fait.
+    </p>
+    <figure class="fig card">
+      <div class="scroll">
+        <svg class="diagram" viewBox="0 0 940 480" role="img"
+             aria-label="Schéma en étoile : dwh.fact_transactions au centre est reliée par clé étrangère à dim_clients, dim_temps et dim_canal. dim_agences est reliée à dim_clients par une ligne pointillée, car l'agence est un attribut du client et non de la transaction.">
+          <defs>
+            <marker id="ar2" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk-ink"/></marker>
+          </defs>
+
+          <rect class="d-accent" x="360" y="168" width="220" height="144" rx="8"/>
+          <text class="t-a" x="470" y="198" text-anchor="middle">fact_transactions</text>
+          <text class="t-s" x="470" y="220" text-anchor="middle">grain : 1 transaction carte</text>
+          <text class="t-s" x="470" y="238" text-anchor="middle">montant, distance, authentification</text>
+          <text class="t-f" x="470" y="256" text-anchor="middle">is_fraud / fraud_type (nullable)</text>
+          <text class="t-s" x="470" y="274" text-anchor="middle">mode_ingestion (batch / stream)</text>
+          <text class="t-s" x="470" y="292" text-anchor="middle">transaction_bk (unique)</text>
+
+          <rect class="d-box" x="60" y="44" width="196" height="88" rx="7"/>
+          <text class="t" x="158" y="76" text-anchor="middle">dim_clients</text>
+          <text class="t-s" x="158" y="96" text-anchor="middle">segment, revenu, agence_key</text>
+          <text class="t-s" x="158" y="112" text-anchor="middle">pseudonymisé RGPD</text>
+
+          <rect class="d-box" x="684" y="44" width="196" height="88" rx="7"/>
+          <text class="t" x="782" y="76" text-anchor="middle">dim_temps</text>
+          <text class="t-s" x="782" y="96" text-anchor="middle">heure, jour_semaine, is_nuit</text>
+          <text class="t-f" x="782" y="112" text-anchor="middle">+ membre Inconnu (clé 0)</text>
+
+          <rect class="d-box" x="60" y="348" width="196" height="88" rx="7"/>
+          <text class="t" x="158" y="380" text-anchor="middle">dim_agences</text>
+          <text class="t-s" x="158" y="400" text-anchor="middle">10 agences du réseau</text>
+          <text class="t-s" x="158" y="416" text-anchor="middle">attribut de dim_clients</text>
+
+          <rect class="d-box" x="684" y="348" width="196" height="88" rx="7"/>
+          <text class="t" x="782" y="380" text-anchor="middle">dim_canal</text>
+          <text class="t-s" x="782" y="400" text-anchor="middle">canal × code MCC</text>
+          <text class="t-f" x="782" y="416" text-anchor="middle">+ membre Inconnu (clé 0)</text>
+
+          <path class="thin" marker-end="url(#ar2)" d="M256,116 L360,196"/>
+          <text class="lbl" x="268" y="150">fk_fact_client · N:1</text>
+          <path class="thin" marker-end="url(#ar2)" d="M684,116 L580,196"/>
+          <text class="lbl" x="560" y="150" text-anchor="end">fk_fact_temps · N:1</text>
+          <path class="thin" marker-end="url(#ar2)" d="M684,368 L580,284"/>
+          <text class="lbl" x="560" y="336" text-anchor="end">fk_fact_canal · N:1</text>
+          <path class="thin-d" d="M158,348 L158,132"/>
+          <text class="lbl" x="168" y="240">agence_key · attribut, pas un FK du fait</text>
+        </svg>
+      </div>
+      <figcaption>
+        Clés techniques entières. <b>dim_temps</b> est une dimension conforme (1 ligne / heure sur
+        l'année simulée), réutilisable par tous les blocs suivants.
+      </figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================ FIGURE 3 ============================ -->
+  <section>
+    <h2>Les quatre couches</h2>
+    <p class="sub">
+      Découpage à la Kimball. Chaque couche a une responsabilité unique : rejouer une
+      transformation ne nécessite jamais de réingérer la source, et chaque fait se retrace
+      jusqu'à sa ligne de staging d'origine.
+    </p>
+    <figure class="fig card">
+      <div class="scroll">
+        <svg class="diagram" viewBox="0 0 900 250" role="img"
+             aria-label="Les quatre couches du socle : staging, dwh, mart, et ops qui journalise et contrôle les trois autres sans jamais être sur le chemin critique.">
+          <defs>
+            <marker id="ar3" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" class="mk-ink"/></marker>
+          </defs>
+
+          <rect class="d-box" x="16" y="30" width="256" height="104" rx="8"/>
+          <text class="t" x="34" y="58">staging</text>
+          <text class="t-s" x="34" y="82">copie brute, batch ou stream</text>
+          <text class="t-s" x="34" y="100">aucune règle métier, aucune FK</text>
+          <text class="t-s" x="34" y="118">clé : transaction_bk</text>
+
+          <rect class="d-box" x="322" y="30" width="256" height="104" rx="8"/>
+          <text class="t" x="340" y="58">dwh</text>
+          <text class="t-s" x="340" y="82">4 dimensions + table de faits</text>
+          <text class="t-s" x="340" y="100">fonction de transformation</text>
+          <text class="t-s" x="340" y="118">idempotente, partagée</text>
+
+          <rect class="d-box" x="628" y="30" width="256" height="104" rx="8"/>
+          <text class="t" x="646" y="58">mart</text>
+          <text class="t-s" x="646" y="82">vues de restitution</text>
+          <text class="t-s" x="646" y="100">KPI, profils, top fraude</text>
+          <text class="t-s" x="646" y="118">contrat d'interface BC02+</text>
+
+          <rect class="d-panel" x="16" y="176" width="868" height="58" rx="8"/>
+          <text class="t" x="34" y="202">ops</text>
+          <text class="t-s" x="90" y="199">journal des chargements (batch &amp; stream)</text>
+          <text class="t-s" x="90" y="217">10 contrôles qualité à chaque exécution</text>
+
+          <path class="flow" marker-end="url(#ar3)" d="M272,82 L322,82"/>
+          <path class="flow" marker-end="url(#ar3)" d="M578,82 L628,82"/>
+          <path class="flow-t" marker-end="url(#ar3)" d="M144,134 L144,176"/>
+          <path class="flow-t" marker-end="url(#ar3)" d="M450,134 L450,176"/>
+          <path class="flow-t" marker-end="url(#ar3)" d="M756,134 L756,176"/>
+        </svg>
+      </div>
+      <figcaption>
+        <b>ops</b> observe les trois autres couches sans jamais être sur le chemin critique de
+        l'écriture — un incident du journal n'a jamais bloqué un chargement.
+      </figcaption>
+    </figure>
+  </section>
+
+  <!-- ============================ GUARANTEES ============================ -->
+  <section>
+    <h2>Garanties techniques</h2>
+    <p class="sub">Ce qui rend la chaîne rejouable et sûre en exploitation — vérifié en conditions réelles, pas seulement documenté.</p>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Propriété</th><th>Mécanisme</th></tr></thead>
+        <tbody>
+          <tr><td>Idempotence batch</td><td><code>TRUNCATE … RESTART IDENTITY</code> + clé métier déterministe <code>TX-000000001</code></td></tr>
+          <tr><td>Idempotence stream</td><td><code>ON CONFLICT (transaction_bk) DO NOTHING</code> + jeu de déduplication Redis (<code>dedup:{bk}</code>, TTL 24 h)</td></tr>
+          <tr><td>At-least-once</td><td>commit de l'offset Kafka <em>après</em> écriture réussie en base — jamais avant</td></tr>
+          <tr><td>Pas de perte sur échec transitoire</td><td>le marquage Redis (dédup + features) n'a lieu qu'après succès Postgres — un lot en échec est rejoué à l'identique</td></tr>
+          <tr><td>Zéro doublon producteur</td><td><code>enable.idempotence = true</code>, <code>acks = all</code></td></tr>
+          <tr><td>Messages malformés isolés</td><td>validation de schéma JSON avant écriture — rejet vers <code>transactions.dlq</code>, jamais de blocage du flux</td></tr>
+          <tr><td>Pas de perte silencieuse de dimension</td><td>membre « Inconnu » (clé 0) sur <code>dim_temps</code> / <code>dim_canal</code> — un client inconnu, lui, reste en attente et remonte en contrôle qualité</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============================ QUALITY ============================ -->
+  <section>
+    <h2>Contrôles qualité</h2>
+    <p class="sub">Dernière exécution de <code>scripts/quality_checks.py</code>, résultats journalisés dans <code>ops.controle_qualite</code>.</p>
+    <div class="tbl-scroll">
+      <table>
+        <thead><tr><th>Contrôle</th><th>Catégorie</th><th>Statut</th><th>Valeur</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>fk_completes_fact</td><td>complétude</td><td><span class="pill ok">OK</span></td><td class="num">0</td><td>Aucune clé étrangère NULL dans le fait</td></tr>
+          <tr><td>integrite_client_staging</td><td>intégrité</td><td><span class="pill ok">OK</span></td><td class="num">0</td><td>Tout client_id du staging résout vers dim_clients</td></tr>
+          <tr><td>unicite_transaction_bk</td><td>unicité</td><td><span class="pill ok">OK</span></td><td class="num">0</td><td>Aucun doublon de clé métier</td></tr>
+          <tr><td>montants_positifs</td><td>cohérence</td><td><span class="pill ok">OK</span></td><td class="num">0</td><td>Aucun montant nul ou négatif</td></tr>
+          <tr><td>distance_non_negative</td><td>cohérence</td><td><span class="pill ok">OK</span></td><td class="num">0</td><td>Aucune distance au domicile négative</td></tr>
+          <tr><td>coherence_label_fraude</td><td>cohérence</td><td><span class="pill ok">OK</span></td><td class="num">0</td><td>fraud_type renseigné ssi is_fraud = TRUE</td></tr>
+          <tr><td>taux_fraude_plausible</td><td>plausibilité</td><td><span class="pill ok">OK</span></td><td class="num">1,50 %</td><td>Taux de fraude dans [0,5 % – 3,0 %]</td></tr>
+          <tr><td>staging_transforme</td><td>complétude</td><td><span class="pill ok">OK</span></td><td class="num">0</td><td>Aucune ligne de staging bloquée &gt; 10 min</td></tr>
+          <tr><td>referentiel_agences</td><td>complétude</td><td><span class="pill ok">OK</span></td><td class="num">10</td><td>10 agences attendues</td></tr>
+          <tr><td>referentiel_canaux</td><td>complétude</td><td><span class="pill ok">OK</span></td><td class="num">10</td><td>9 canaux + membre Inconnu</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============================ STACK ============================ -->
+  <section>
+    <h2>Stack</h2>
+    <p class="sub">Infra en conteneurs, code Python en local (l'API de scoring viendra au BC05).</p>
+    <div class="chips">
+      <span>PostgreSQL 15</span>
+      <span>Redis 7</span>
+      <span>Apache Kafka 3.8 · KRaft</span>
+      <span>Python 3.10</span>
+      <span>confluent-kafka</span>
+      <span>psycopg2</span>
+      <span>Docker Compose</span>
+      <span>Adminer</span>
+      <span>kafka-ui</span>
+    </div>
+
+    <p class="note">
+      <b>Cadrage.</b> Le membre « Inconnu » de <code>dim_temps</code> sera systématiquement
+      utilisé par toute démo streaming lancée hors de l'année simulée (2025) — comportement
+      volontaire et documenté, pas un défaut. Kafka tourne en cluster à un seul broker,
+      suffisant pour la démonstration ; la fenêtre Redis des features est une fenêtre glissante
+      approximative (<code>INCR</code> + <code>EXPIRE</code>), pas une fenêtre exacte à la
+      seconde. Blocs <b>BC02 → BC06</b> : à venir.
+    </p>
+  </section>
+
+</div>

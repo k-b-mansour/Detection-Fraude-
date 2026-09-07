@@ -1,0 +1,66 @@
+{
+  "split": {
+    "n_train": 320000,
+    "n_test": 80000,
+    "date_limite_train": "2025-10-19 19:00:00",
+    "date_debut_test": "2025-10-19 19:00:00",
+    "taux_fraude_train_pct": 1.493,
+    "taux_fraude_test_pct": 1.526
+  },
+  "modeles": {
+    "logistic_regression": {
+      "seuil": 0.5,
+      "auc_roc": 0.9834,
+      "gini": 0.9667,
+      "average_precision": 0.6699,
+      "precision": 0.8,
+      "recall": 0.4554,
+      "f1": 0.5804
+    },
+    "logistic_regression_smote": {
+      "seuil": 0.5,
+      "auc_roc": 0.9842,
+      "gini": 0.9684,
+      "average_precision": 0.6048,
+      "precision": 0.2335,
+      "recall": 0.8657,
+      "f1": 0.3678
+    },
+    "lightgbm": {
+      "seuil": 0.5,
+      "auc_roc": 0.9983,
+      "gini": 0.9965,
+      "average_precision": 0.9214,
+      "precision": 0.6089,
+      "recall": 0.9664,
+      "f1": 0.7471
+    }
+  },
+  "seuil_optimal_lightgbm": 0.98,
+  "lightgbm_seuil_defaut": {
+    "seuil": 0.5,
+    "auc_roc": 0.9983,
+    "gini": 0.9965,
+    "average_precision": 0.9214,
+    "precision": 0.6089,
+    "recall": 0.9664,
+    "f1": 0.7471
+  },
+  "lightgbm_seuil_optimise": {
+    "seuil": 0.98,
+    "auc_roc": 0.9983,
+    "gini": 0.9965,
+    "average_precision": 0.9214,
+    "precision": 0.8849,
+    "recall": 0.7682,
+    "f1": 0.8224
+  },
+  "scale_pos_weight": 65.96,
+  "top_features": [
+    "montant",
+    "distance_domicile_km",
+    "revenu_mensuel_net",
+    "heure",
+    "mois"
+  ]
+}

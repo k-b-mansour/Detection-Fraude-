@@ -1,0 +1,598 @@
+<!doctype html>
+<title>BC01 Story Map</title>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600;8..60,700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f4f6f8;
+    --surface: #ffffff;
+    --surface-2: #eaeef2;
+    --ink: #1b2430;
+    --ink-muted: #5b6472;
+    --ink-faint: #8790a0;
+    --border: #dbe1e8;
+    --border-strong: #c3cbd4;
+
+    --primary: #164b60;
+    --primary-ink: #f3f8fa;
+    --primary-tint: #e4edf0;
+
+    --status-done: #2f6b4f;
+    --status-done-bg: #e6f1eb;
+    --status-done-border: #a9cdb9;
+
+    --status-next: #a8631f;
+    --status-next-bg: #faf0e2;
+    --status-next-border: #e4c193;
+
+    --status-later: #6b7280;
+    --status-later-bg: #eef0f2;
+    --status-later-border: #d3d7dc;
+
+    --persona-eng-bg: #e6ebf7;
+    --persona-eng-ink: #35479c;
+    --persona-cnf-bg: #f1e7f6;
+    --persona-cnf-ink: #7d3f97;
+    --persona-ds-bg: #e2f1ee;
+    --persona-ds-ink: #237067;
+    --persona-jury-bg: #f7e9e4;
+    --persona-jury-ink: #9a4a35;
+
+    --shadow: 0 1px 2px rgba(27,36,48,.05), 0 4px 12px rgba(27,36,48,.05);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #11161d;
+      --surface: #1a2029;
+      --surface-2: #212833;
+      --ink: #e7eaee;
+      --ink-muted: #a2aab8;
+      --ink-faint: #737d8c;
+      --border: #2b3340;
+      --border-strong: #3a4453;
+
+      --primary: #3f8ba6;
+      --primary-ink: #0d1418;
+      --primary-tint: #1c333c;
+
+      --status-done: #6cbf94;
+      --status-done-bg: #1a3327;
+      --status-done-border: #2f5b43;
+
+      --status-next: #e2a862;
+      --status-next-bg: #3a2c18;
+      --status-next-border: #644a25;
+
+      --status-later: #9aa3b0;
+      --status-later-bg: #232933;
+      --status-later-border: #3a4250;
+
+      --persona-eng-bg: #232c49;
+      --persona-eng-ink: #a7b6ec;
+      --persona-cnf-bg: #34243d;
+      --persona-cnf-ink: #d8aeea;
+      --persona-ds-bg: #17332f;
+      --persona-ds-ink: #8fd6c9;
+      --persona-jury-bg: #3a271f;
+      --persona-jury-ink: #eba48b;
+
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 16px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #11161d;
+    --surface: #1a2029;
+    --surface-2: #212833;
+    --ink: #e7eaee;
+    --ink-muted: #a2aab8;
+    --ink-faint: #737d8c;
+    --border: #2b3340;
+    --border-strong: #3a4453;
+
+    --primary: #3f8ba6;
+    --primary-ink: #0d1418;
+    --primary-tint: #1c333c;
+
+    --status-done: #6cbf94;
+    --status-done-bg: #1a3327;
+    --status-done-border: #2f5b43;
+
+    --status-next: #e2a862;
+    --status-next-bg: #3a2c18;
+    --status-next-border: #644a25;
+
+    --status-later: #9aa3b0;
+    --status-later-bg: #232933;
+    --status-later-border: #3a4250;
+
+    --persona-eng-bg: #232c49;
+    --persona-eng-ink: #a7b6ec;
+    --persona-cnf-bg: #34243d;
+    --persona-cnf-ink: #d8aeea;
+    --persona-ds-bg: #17332f;
+    --persona-ds-ink: #8fd6c9;
+    --persona-jury-bg: #3a271f;
+    --persona-jury-ink: #eba48b;
+
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 6px 16px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+    line-height: 1.45;
+  }
+  .page {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 40px 32px 64px;
+  }
+
+  /* ---------- header ---------- */
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--primary);
+  }
+  h1 {
+    font-family: "Source Serif 4", Georgia, serif;
+    font-weight: 600;
+    font-size: 34px;
+    margin: 6px 0 10px;
+    text-wrap: balance;
+    color: var(--ink);
+  }
+  .intro {
+    max-width: 66ch;
+    color: var(--ink-muted);
+    font-size: 15.5px;
+    margin: 0 0 26px;
+  }
+  .intro strong { color: var(--ink); font-weight: 600; }
+
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(140px, 1fr));
+    gap: 12px;
+    max-width: 780px;
+    margin-bottom: 28px;
+  }
+  .stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+  }
+  .stat .n {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 26px;
+    font-weight: 600;
+    color: var(--ink);
+    display: block;
+  }
+  .stat .l {
+    font-size: 12px;
+    color: var(--ink-muted);
+  }
+  .stat.done .n { color: var(--status-done); }
+  .stat.next .n { color: var(--status-next); }
+  .stat.later .n { color: var(--status-later); }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+    padding: 14px 18px;
+    background: var(--surface-2);
+    border-radius: 10px;
+    margin-bottom: 30px;
+    font-size: 13px;
+    color: var(--ink-muted);
+  }
+  .legend-group { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .legend-title { font-weight: 600; color: var(--ink); margin-right: 2px; }
+  .swatch { width: 11px; height: 11px; border-radius: 3px; display: inline-block; flex: none; }
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+
+  /* ---------- persona chips ---------- */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: .02em;
+    padding: 2px 7px;
+    border-radius: 5px;
+    line-height: 1.6;
+  }
+  .chip.eng { background: var(--persona-eng-bg); color: var(--persona-eng-ink); }
+  .chip.cnf { background: var(--persona-cnf-bg); color: var(--persona-cnf-ink); }
+  .chip.ds  { background: var(--persona-ds-bg);  color: var(--persona-ds-ink); }
+  .chip.jury{ background: var(--persona-jury-bg);color: var(--persona-jury-ink); }
+
+  /* ---------- map ---------- */
+  .map-scroll {
+    overflow-x: auto;
+    padding-bottom: 8px;
+    border-radius: 14px;
+  }
+  .map-grid {
+    display: grid;
+    grid-template-columns: 196px repeat(6, minmax(228px, 1fr));
+    gap: 10px;
+    min-width: 1780px;
+  }
+
+  .backbone-spacer {
+    align-self: end;
+    padding: 0 4px 8px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+  .backbone {
+    background: var(--primary);
+    color: var(--primary-ink);
+    border-radius: 10px;
+    padding: 14px 16px 15px;
+  }
+  .backbone .idx {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    opacity: .75;
+    display: block;
+    margin-bottom: 3px;
+  }
+  .backbone .name {
+    font-weight: 600;
+    font-size: 14.5px;
+    text-wrap: balance;
+  }
+
+  .row-label {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    border: 1px solid transparent;
+  }
+  .row-label .title { font-weight: 600; font-size: 13.5px; }
+  .row-label .count {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+  }
+  .row-label.done  { background: var(--status-done-bg);  border-color: var(--status-done-border); }
+  .row-label.done .title { color: var(--status-done); }
+  .row-label.next  { background: var(--status-next-bg);  border-color: var(--status-next-border); }
+  .row-label.next .title { color: var(--status-next); }
+  .row-label.later { background: var(--status-later-bg); border-color: var(--status-later-border); }
+  .row-label.later .title { color: var(--status-later); }
+  .row-label .count { color: var(--ink-muted); }
+
+  .cell {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-radius: 10px;
+    padding: 4px;
+  }
+  .cell.done  { background: color-mix(in srgb, var(--status-done-bg) 55%, transparent); }
+  .cell.next  { background: color-mix(in srgb, var(--status-next-bg) 55%, transparent); }
+  .cell.later { background: color-mix(in srgb, var(--status-later-bg) 55%, transparent); }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--border-strong);
+    border-radius: 8px;
+    padding: 10px 12px 11px;
+  }
+  .cell.done .card  { border-left-color: var(--status-done); box-shadow: var(--shadow); }
+  .cell.next .card  { border-left-color: var(--status-next); border-style: solid; }
+  .cell.later .card { border-left-color: var(--status-later); border-style: dashed; }
+
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .card-ref {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 10px;
+    color: var(--ink-faint);
+  }
+  .card-want {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--ink);
+    text-wrap: balance;
+    margin: 0 0 4px;
+  }
+  .card-why {
+    font-size: 12px;
+    color: var(--ink-muted);
+    margin: 0;
+  }
+  .card-why::before { content: "↳ "; color: var(--ink-faint); }
+
+  footer {
+    margin-top: 30px;
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    border-top: 1px solid var(--border);
+    padding-top: 14px;
+  }
+  footer code {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    background: var(--surface-2);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
+</style>
+
+<div class="page">
+
+  <div class="eyebrow">Détection de fraude bancaire — story map</div>
+  <h1>BC01 — Architecture Data Warehouse &amp; Ingestion Streaming</h1>
+  <p class="intro">
+    Lecture de gauche à droite : les six étapes du pipeline (backbone). Lecture de haut en bas
+    sous chaque étape : les user stories, classées par bande de priorité — du
+    <strong>walking skeleton déjà construit et vérifié</strong> jusqu'à la vision cible.
+  </p>
+
+  <div class="stat-row">
+    <div class="stat"><span class="n">26</span><span class="l">user stories</span></div>
+    <div class="stat done"><span class="n">14</span><span class="l">livrées (MVP)</span></div>
+    <div class="stat next"><span class="n">6</span><span class="l">prochaine itération</span></div>
+    <div class="stat later"><span class="n">6</span><span class="l">vision cible</span></div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-group">
+      <span class="legend-title">Personas</span>
+      <span class="legend-item"><span class="chip eng">ENG</span> Ingénieur ML/Data</span>
+      <span class="legend-item"><span class="chip cnf">CNF</span> Conformité RGPD</span>
+      <span class="legend-item"><span class="chip ds">DS</span> Data Scientist aval (BC02+)</span>
+      <span class="legend-item"><span class="chip jury">JURY</span> Jury / relecteur RNCP</span>
+    </div>
+    <div class="legend-group">
+      <span class="legend-title">Bandes</span>
+      <span class="legend-item"><span class="swatch" style="background:var(--status-done)"></span>MVP construit</span>
+      <span class="legend-item"><span class="swatch" style="background:var(--status-next)"></span>Prochaine itération</span>
+      <span class="legend-item"><span class="swatch" style="background:var(--status-later)"></span>Vision cible</span>
+    </div>
+  </div>
+
+  <div class="map-scroll">
+    <div class="map-grid">
+
+      <!-- backbone row -->
+      <div class="backbone-spacer">Bandes de priorité ↓</div>
+      <div class="backbone"><span class="idx">01</span><span class="name">Concevoir l'architecture data</span></div>
+      <div class="backbone"><span class="idx">02</span><span class="name">Provisionner l'infrastructure</span></div>
+      <div class="backbone"><span class="idx">03</span><span class="name">Générer &amp; charger le référentiel</span></div>
+      <div class="backbone"><span class="idx">04</span><span class="name">Simuler l'ingestion temps réel</span></div>
+      <div class="backbone"><span class="idx">05</span><span class="name">Exposer les données en aval</span></div>
+      <div class="backbone"><span class="idx">06</span><span class="name">Sécuriser, monitorer, documenter</span></div>
+
+      <!-- MVP row -->
+      <div class="row-label done"><span class="title">MVP — construit &amp; vérifié</span><span class="count">14 stories</span></div>
+
+      <div class="cell done">
+        <div class="card">
+          <div class="card-top"><span class="chip eng">ENG</span><span class="card-ref">A1·01</span></div>
+          <p class="card-want">Modéliser un schéma en étoile (4 dimensions + 2 faits)</p>
+          <p class="card-why">les features futures (BC02/BC03) restent simples à calculer</p>
+        </div>
+        <div class="card">
+          <div class="card-top"><span class="chip eng">ENG</span><span class="card-ref">A1·02</span></div>
+          <p class="card-want">Séparer une zone d'atterrissage brute des faits labellisés</p>
+          <p class="card-why">refléter le délai réel entre transaction et confirmation de fraude</p>
+        </div>
+      </div>
+
+      <div class="cell done">
+        <div class="card">
+          <div class="card-top"><span class="chip eng">ENG</span><span class="card-ref">A2·01</span></div>
+          <p class="card-want">Démarrer tous les services en une seule commande Docker Compose</p>
+          <p class="card-why">garantir une reproductibilité totale de l'environnement</p>
+        </div>
+        <div class="card">
+          <div class="card-top"><span class="chip eng">ENG</span><span class="card-ref">A2·02</span></div>
+          <p class="card-want">Activer un healthcheck sur PostgreSQL</p>
+          <p class="card-why">détecter immédiatement un problème de démarrage</p>
+        </div>
+      </div>
+
+      <div class="cell done">
+        <div class="card">
+          <div class="card-top"><span class="chip eng">ENG</span><span class="card-ref">A3·01</span></div>
+          <p class="card-want">Générer un jeu de données reproductible (graine fixe)</p>
+          <p class="card-why">travailler sans dépendre de données bancaires réelles sensibles</p>
+        </div>
+        <div class="card">
+          <div class="card-top"><span class="chip cnf">CNF</span><span class="card-ref">A3·02</span></div>
+          <p class="card-want">Garantir qu'aucun nom ni identifiant réel n'est généré</p>
+          <p class="card-why">la pseudonymisation soit assurée par construction (privacy by design)</p>
+        </div>
+        <div class="card">
+          <div class="card-top"><span class="chip eng">ENG</span><span class="card-ref">A3·03</span></div>
+          <p class="card-want">Injecter 6 typologies de fraude aux signatures distinctes</p>
+          <p class="card-why">les futurs modèles disposent d'un signal réellement détectable</p>
+        </div>
+      </div>
+
+      <div class="cell done">
+        <div class="card">
+          <div class="card-top"><span class="chip eng">ENG</span><span class="card-ref">A4·01</span></div>
+          <p class="card-want">Publier des transactions en flux continu sur un topic Kafka</p>
+          <p class="card-why">simuler un environnement d'ingestion de production</p>
+        </div>
+        <div class="card">
+          <div class="card-top"><span class="chip eng">ENG</span><span class="card-ref">A4·02</span></div>
+          <p class="card-want">Consommer ce flux vers la zone d'atterrissage</p>
+          <p class="card-why">découpler l'ingestion brute du modèle dimensionnel</p>
+        </div>
+        <div class="card">
+          <div class="card-top"><span class="chip eng">ENG</span><span class="card-ref">A4·03</span></div>
+          <p class="card-want">Visualiser les topics et messages via Kafka UI</p>
+          <p class="card-why">déboguer le flux sans ligne de commande</p>
+        </div>
+      </div>
+
+      <div class="cell done">
+        <div class="card">
+          <div class="card-top"><span class="chip ds">DS</span><span class="card-ref">A5·01</span></div>
+          <p class="card-want">Interroger directement les tables du schéma en étoile</p>
+          <p class="card-why">calculer les statistiques descriptives du BC02</p>
+        </div>
+        <div class="card">
+          <div class="card-top"><span class="chip eng">ENG</span><span class="card-ref">A5·02</span></div>
+          <p class="card-want">Mettre à jour un feature store Redis à chaque transaction</p>
+          <p class="card-why">alimenter le futur scoring temps réel (BC05)</p>
+        </div>
+      </div>
+
+      <div class="cell done">
+        <div class="card">
+          <div class="card-top"><span class="chip cnf">CNF</span><span class="card-ref">A6·01</span></div>
+          <p class="card-want">Vérifier qu'aucune donnée personnelle identifiante n'est stockée en clair</p>
+          <p class="card-why">rester conforme au RGPD</p>
+        </div>
+        <div class="card">
+          <div class="card-top"><span class="chip jury">JURY</span><span class="card-ref">A6·02</span></div>
+          <p class="card-want">Disposer d'une documentation d'architecture claire</p>
+          <p class="card-why">comprendre les choix techniques rapidement en soutenance</p>
+        </div>
+      </div>
+
+      <!-- NEXT row -->
+      <div class="row-label next"><span class="title">Prochaine itération</span><span class="count">6 stories</span></div>
+
+      <div class="cell next">
+        <div class="card">
+          <div class="card-top"><span class="chip jury">JURY</span><span class="card-ref">A1·03</span></div>
+          <p class="card-want">Documenter chaque choix de modélisation (grain, clés, cardinalités)</p>
+          <p class="card-why">pouvoir le justifier point par point en soutenance</p>
+        </div>
+      </div>
+
+      <div class="cell next">
+        <div class="card">
+          <div class="card-top"><span class="chip eng">ENG</span><span class="card-ref">A2·03</span></div>
+          <p class="card-want">Externaliser les secrets dans un fichier .env non versionné</p>
+          <p class="card-why">ne pas exposer d'identifiants en clair dans le dépôt</p>
+        </div>
+      </div>
+
+      <div class="cell next">
+        <div class="card">
+          <div class="card-top"><span class="chip eng">ENG</span><span class="card-ref">A3·04</span></div>
+          <p class="card-want">Paramétrer l'échelle de génération (5k → 20k clients)</p>
+          <p class="card-why">monter en volume sans changer le code</p>
+        </div>
+      </div>
+
+      <div class="cell next">
+        <div class="card">
+          <div class="card-top"><span class="chip ds">DS</span><span class="card-ref">A4·04</span></div>
+          <p class="card-want">Consommer un flux dont le schéma JSON est validé</p>
+          <p class="card-why">ne pas avoir à gérer des messages malformés côté aval</p>
+        </div>
+      </div>
+
+      <div class="cell next">
+        <div class="card">
+          <div class="card-top"><span class="chip ds">DS</span><span class="card-ref">A5·03</span></div>
+          <p class="card-want">Disposer de vues SQL prêtes à l'emploi (KPIs, agrégats)</p>
+          <p class="card-why">ne pas dupliquer la logique d'analyse dans chaque outil</p>
+        </div>
+      </div>
+
+      <div class="cell next">
+        <div class="card">
+          <div class="card-top"><span class="chip eng">ENG</span><span class="card-ref">A6·03</span></div>
+          <p class="card-want">Ajouter des tests automatisés sur le pipeline de génération</p>
+          <p class="card-why">détecter une régression avant la démo ou la soutenance</p>
+        </div>
+      </div>
+
+      <!-- LATER row -->
+      <div class="row-label later"><span class="title">Vision cible (production)</span><span class="count">6 stories</span></div>
+
+      <div class="cell later">
+        <div class="card">
+          <div class="card-top"><span class="chip eng">ENG</span><span class="card-ref">A1·04</span></div>
+          <p class="card-want">Prévoir des dimensions à variation lente (SCD2) sur dim_clients</p>
+          <p class="card-why">suivre l'évolution du profil client dans le temps</p>
+        </div>
+      </div>
+
+      <div class="cell later">
+        <div class="card">
+          <div class="card-top"><span class="chip eng">ENG</span><span class="card-ref">A2·04</span></div>
+          <p class="card-want">Automatiser le provisioning via une CI</p>
+          <p class="card-why">sécuriser chaque évolution de l'infrastructure</p>
+        </div>
+      </div>
+
+      <div class="cell later">
+        <div class="card">
+          <div class="card-top"><span class="chip eng">ENG</span><span class="card-ref">A3·05</span></div>
+          <p class="card-want">Enrichir le générateur avec des sources externes simulées</p>
+          <p class="card-why">complexifier les scénarios de fraude (listes noires, litiges)</p>
+        </div>
+      </div>
+
+      <div class="cell later">
+        <div class="card">
+          <div class="card-top"><span class="chip eng">ENG</span><span class="card-ref">A4·05</span></div>
+          <p class="card-want">Répliquer le broker Kafka sur plusieurs nœuds</p>
+          <p class="card-why">absorber une montée en charge réaliste</p>
+        </div>
+      </div>
+
+      <div class="cell later">
+        <div class="card">
+          <div class="card-top"><span class="chip eng">ENG</span><span class="card-ref">A5·04</span></div>
+          <p class="card-want">Faire calculer les features par des transformations dbt</p>
+          <p class="card-why">industrialiser le feature engineering (staging → mart)</p>
+        </div>
+      </div>
+
+      <div class="cell later">
+        <div class="card">
+          <div class="card-top"><span class="chip cnf">CNF</span><span class="card-ref">A6·04</span></div>
+          <p class="card-want">Mettre en place un audit trail complet et un vault de secrets</p>
+          <p class="card-why">renforcer la conformité RGPD Art. 22 et DORA</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    Dérivée de l'architecture livrée en <code>docs/BC01.md</code> — les bandes reflètent l'état réel du code, pas un planning théorique.
+  </footer>
+
+</div>

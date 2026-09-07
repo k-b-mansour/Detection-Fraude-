@@ -1,0 +1,90 @@
+services:
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: fraud_postgres
+    environment:
+      POSTGRES_USER: fraud_admin
+      POSTGRES_PASSWORD: fraud_secret
+      POSTGRES_DB: frauddetect
+    ports:
+      - "5434:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./bc01_socle_donnees/sql:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fraud_admin -d frauddetect"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    shm_size: 256mb
+
+  redis:
+    image: redis:7-alpine
+    container_name: fraud_redis
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+
+  adminer:
+    image: adminer:4
+    container_name: fraud_adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+  # Kafka en mode KRaft (sans Zookeeper) - un seul broker, suffisant pour la démo streaming du BC01
+  kafka:
+    image: apache/kafka:3.8.0
+    container_name: fraud_kafka
+    hostname: kafka
+    ports:
+      - "9094:9094"
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://kafka:19092,CONTROLLER://kafka:19093,PLAINTEXT_HOST://0.0.0.0:9094
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:19092,PLAINTEXT_HOST://localhost:9094
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:19093
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+
+  # Interface web pour visualiser les topics/messages Kafka - utile pour la démo/soutenance
+  kafka-ui:
+    image: provectuslabs/kafka-ui:v0.7.2
+    container_name: fraud_kafka_ui
+    ports:
+      - "8090:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:19092
+    depends_on:
+      - kafka
+
+  # BC05 — API de scoring temps réel, sert le modèle LightGBM du BC03.
+  # Redis ici : nom de service + port interne (6379), pas le port hôte 6380
+  # utilisé par les scripts lancés hors conteneur.
+  api:
+    build:
+      context: .
+      dockerfile: bc05_api_monitoring/Dockerfile
+    container_name: fraud_api
+    ports:
+      - "8001:8000"
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      - redis
+
+volumes:
+  pg_data:
+  redis_data:
+  kafka_data:

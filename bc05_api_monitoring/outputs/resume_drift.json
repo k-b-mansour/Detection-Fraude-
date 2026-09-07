@@ -1,0 +1,28 @@
+{
+  "normal": {
+    "scenario": "normal",
+    "n_colonnes_totales": 11,
+    "n_colonnes_derivees": 1,
+    "part_colonnes_derivees_pct": 9.09,
+    "seuil_alerte_pct": 20.0,
+    "alerte_declenchee": false,
+    "colonnes_derivees": [
+      "mois"
+    ],
+    "rapport_html": "drift_normal.html"
+  },
+  "derive": {
+    "scenario": "derive",
+    "n_colonnes_totales": 11,
+    "n_colonnes_derivees": 3,
+    "part_colonnes_derivees_pct": 27.27,
+    "seuil_alerte_pct": 20.0,
+    "alerte_declenchee": true,
+    "colonnes_derivees": [
+      "heure",
+      "mois",
+      "montant"
+    ],
+    "rapport_html": "drift_derive.html"
+  }
+}

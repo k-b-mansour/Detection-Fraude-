@@ -77,11 +77,13 @@ jobs:
       - name: Publier l'image (main uniquement)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         run: |
-          # Un nom de dépôt/image Docker doit être en minuscules — le nom du
-          # dépôt GitHub (${{ github.repository }}) ne l'est pas forcément
-          # (ex. "Detection-Fraude-"), ce qui avait fait échouer "docker push"
-          # instantanément (référence invalide) lors du run précédent.
-          IMAGE=ghcr.io/$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')/fraud-api
+          # Un composant de nom d'image Docker/OCI doit être en minuscules ET
+          # ne peut ni commencer ni finir par un tiret. Le nom de ce dépôt
+          # ("Detection-Fraude-") viole les deux règles une fois mis en
+          # minuscules ("detection-fraude-" se termine par "-"), ce qui avait
+          # fait échouer "docker push" à deux reprises. On construit donc le
+          # nom de l'image à partir du seul propriétaire du dépôt, valide.
+          IMAGE=ghcr.io/${{ github.repository_owner }}/fraud-api
           docker tag fraud-api:${{ github.sha }} $IMAGE:${{ github.sha }}
           docker tag fraud-api:${{ github.sha }} $IMAGE:latest
           docker push $IMAGE:${{ github.sha }}

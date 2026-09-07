@@ -9,3 +9,4 @@ __pycache__/
 # Rapports Evidently volumineux (régénérés par drift_report.py)
 bc05_api_monitoring/outputs/*.html
 bc05_api_monitoring/outputs/capture_*.png
+.claude/

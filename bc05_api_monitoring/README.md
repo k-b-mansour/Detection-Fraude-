@@ -24,7 +24,10 @@ python bc05_api_monitoring/scripts/drift_report.py
 | API (santé) | http://localhost:8001/health |
 | API (Swagger) | http://localhost:8001/docs |
 
-Document détaillé : [docs/bc05-explication.pdf](docs/bc05-explication.pdf).
+Document détaillé : [docs/bc05-explication-v2.pdf](docs/bc05-explication-v2.pdf).
+
+**Dépôt GitHub :** https://github.com/k-b-mansour/Detection-Fraude-
+**Image publiée :** `ghcr.io/k-b-mansour/fraud-api` (pipeline CI/CD vert après 3 itérations — voir le rapport, section 7)
 
 ## Résultats clés (dernier run)
 
@@ -34,9 +37,10 @@ Document détaillé : [docs/bc05-explication.pdf](docs/bc05-explication.pdf).
 - **Monitoring** : 9,1 % de dérive en scénario normal (pas d'alerte) / 27,3 % en scénario simulé
   (alerte, seuil 20 %) — voir le rapport pour l'explication du signal naturel sur `mois` (artefact
   du split temporel du BC03, pas une vraie dérive de comportement)
-- **CI/CD** : `.github/workflows/ci-cd.yml` (tests + build + healthcheck + publication GHCR sur
-  `main`) — chaque étape rejouée et vérifiée en local ; l'exécution sur de vrais runners GitHub
-  nécessite un dépôt distant, non configuré dans cette session
+- **CI/CD** : pipeline **exécuté sur de vrais runners GitHub Actions** (pas seulement en local) —
+  3 échecs réels puis un run entièrement vert : `pytest` nu → `python -m pytest` (sys.path), puis
+  deux échecs de nommage d'image GHCR (majuscules, puis tiret final) → nom basé sur le
+  propriétaire du dépôt. Détail complet dans le rapport, section 7.
 
 ## Deux incidents Docker réels, documentés dans le rapport
 

@@ -325,30 +325,44 @@ sur 9,1 % des colonnes (1 sur 11, sous le seuil d'alerte de 20 %) ; le scénario
 <p>
 Le pipeline (<code>.github/workflows/ci-cd.yml</code>) exécute deux jobs à chaque push ou pull
 request vers <code>main</code> : <code>test</code> installe les dépendances de service et lance la
-suite pytest ; <code>build-image</code> construit l'image Docker, la démarre, et interroge
-<code>/health</code> jusqu'à quinze fois avant d'échouer — la même vérification que celle menée
-manuellement à la section 5, automatisée. La publication de l'image sur GitHub Container Registry
-(<code>ghcr.io</code>) est conditionnée à un push sur <code>main</code> : jamais sur une pull
-request, pour qu'aucune image non relue ne devienne accessible.
+suite pytest ; <code>build-image</code> construit l'image Docker, la démarre, interroge
+<code>/health</code> jusqu'à quinze fois avant d'échouer, puis publie l'image sur GitHub Container
+Registry (<code>ghcr.io</code>) — uniquement sur un push vers <code>main</code>, jamais sur une
+pull request, pour qu'aucune image non relue ne devienne accessible. Poussé sur un dépôt GitHub
+réel, il s'est exécuté sur les runners GitHub Actions — pas seulement rejoué en local.
+</p>
+
+<p>
+Le premier push a échoué : le job <code>test</code> plantait en 29 secondes
+(<code>ModuleNotFoundError</code>, code de sortie 2). Cause identifiée et reproduite en local à
+l'identique : le workflow invoquait <code>pytest</code> nu, qui n'ajoute pas la racine du dépôt à
+<code>sys.path</code>, contrairement à <code>python -m pytest</code> utilisé lors des vérifications
+manuelles. Une fois corrigé, <code>test</code> passait, mais la publication sur GHCR échouait à son
+tour, instantanément : un nom d'image Docker doit être en minuscules et ne peut ni commencer ni
+finir par un tiret — deux règles que le nom de ce dépôt (<code>Detection-Fraude-</code>) enfreignait
+une fois mis en minuscules. Le correctif final construit le nom de l'image à partir du seul
+propriétaire du dépôt plutôt que de son nom complet.
 </p>
 
 <table>
-<thead><tr><th>Étape</th><th>Statut de vérification</th></tr></thead>
+<thead><tr><th>Run</th><th>Résultat</th><th>Cause / correction</th></tr></thead>
 <tbody>
-<tr><td>Tests pytest (7 cas)</td><td>✅ Exécutés en local avec succès — étape identique à celle du workflow</td></tr>
-<tr><td><code>docker build</code> de l'image de service</td><td>✅ Exécuté en local avec succès — corrige les deux incidents de la section 5</td></tr>
-<tr><td>Démarrage du conteneur + <code>/health</code></td><td>✅ Exécuté en local avec succès — même séquence que le job CI</td></tr>
-<tr><td>Exécution effective sur GitHub Actions</td><td>⏳ Non vérifiée — nécessite un dépôt distant, hors périmètre de cette session</td></tr>
+<tr><td>#1</td><td>❌ <code>test</code> échoue (29 s)</td><td><code>pytest</code> nu au lieu de <code>python -m pytest</code></td></tr>
+<tr><td>#2</td><td>❌ <code>build-image</code> échoue à la publication</td><td>Nom d'image non en minuscules</td></tr>
+<tr><td>#3</td><td>❌ <code>build-image</code> échoue à la publication</td><td>Nom d'image en minuscules mais terminé par un tiret</td></tr>
+<tr><td>#4</td><td>✅ <code>test</code> et <code>build-image</code> réussis, image publiée</td><td>Nom d'image basé sur le propriétaire du dépôt</td></tr>
 </tbody>
 </table>
 
-<div class="callout warn">
-  <b>Honnêteté sur ce qui est prouvé.</b> Chaque étape du workflow a été rejouée manuellement,
-  dans l'ordre exact où GitHub Actions les exécuterait, et réussit. Ce qui n'a <em>pas</em> été
-  vérifié, faute de dépôt distant configuré pour ce projet, c'est l'exécution du fichier YAML par
-  de vrais runners GitHub. La distinction est délibérément maintenue explicite plutôt que
-  présentée comme équivalente : un pipeline non exécuté sur son infrastructure cible reste, jusqu'à
-  preuve du contraire, un fichier de configuration testé indirectement.
+<div class="callout">
+  <b>Pipeline vérifié en conditions réelles.</b> Les quatre runs ci-dessus ont tous été exécutés
+  par de vrais runners GitHub Actions sur
+  <code>github.com/k-b-mansour/Detection-Fraude-</code>, pas simulés. L'image publiée est
+  disponible sur GitHub Container Registry
+  (<code>ghcr.io/k-b-mansour/fraud-api</code>). Documenter les trois échecs plutôt que ne montrer
+  que le run final reflète fidèlement ce qu'est un pipeline CI/CD en pratique : un filet qui
+  détecte de vraies erreurs de configuration avant qu'elles n'atteignent une image livrée — ici,
+  deux fois de suite, avant de les laisser passer une fois corrigées.
 </div>
 
 <!-- ============================ 8. SYNTHESE ============================ -->

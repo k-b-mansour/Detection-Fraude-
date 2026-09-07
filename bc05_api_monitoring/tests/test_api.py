@@ -8,7 +8,7 @@ de Redis requis : le test_client_id_inconnu vérifie justement que l'API dégrad
 proprement en l'absence de Redis/feature store.
 
 Usage :
-    pytest bc05_api_monitoring/tests/ -v
+    python -m pytest bc05_api_monitoring/tests/ -v
 """
 import pytest
 from fastapi.testclient import TestClient

@@ -13,7 +13,7 @@ docker compose up -d --build api      # écoute sur http://localhost:8001
 
 # Tests
 pip install -r bc05_api_monitoring/requirements-api.txt pytest httpx
-pytest bc05_api_monitoring/tests/ -v  # 7/7
+python -m pytest bc05_api_monitoring/tests/ -v  # 7/7
 
 # Monitoring de dérive
 python bc05_api_monitoring/scripts/drift_report.py

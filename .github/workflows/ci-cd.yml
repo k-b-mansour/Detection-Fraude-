@@ -37,7 +37,12 @@ jobs:
           pip install pytest==9.1.1 httpx==0.28.1
 
       - name: Lancer les tests de l'API
-        run: pytest bc05_api_monitoring/tests/ -v
+        # "python -m pytest" et non "pytest" nu : -m ajoute le répertoire
+        # courant (racine du dépôt) à sys.path, nécessaire pour que
+        # "from bc05_api_monitoring.api.main import app" se résolve — un
+        # bare "pytest" avait fait échouer le tout premier run CI (voir
+        # bc05-explication.pdf, incidents documentés).
+        run: python -m pytest bc05_api_monitoring/tests/ -v
 
   build-image:
     needs: test

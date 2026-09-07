@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>BC05 — API &amp; Monitoring</title>
+<style>
+  @page {
+    size: A4;
+    margin: 22mm 20mm 20mm 20mm;
+    @bottom-center {
+      content: "BC05 — API temps réel, monitoring, CI/CD · page " counter(page) " / " counter(pages);
+      font-family: Arial, sans-serif;
+      font-size: 8.5pt;
+      color: #6b7280;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 10.8pt;
+    line-height: 1.55;
+    color: #1c2230;
+  }
+
+  .cover { page-break-after: always; padding-top: 55mm; }
+  .cover .eyebrow {
+    font-family: Arial, sans-serif; font-size: 9.5pt; letter-spacing: 2px;
+    text-transform: uppercase; color: #1a5270; margin-bottom: 10mm;
+  }
+  .cover h1 {
+    font-family: Arial, sans-serif; font-size: 27pt; font-weight: 700;
+    color: #12212e; margin: 0 0 6mm; line-height: 1.2;
+  }
+  .cover .subtitle {
+    font-family: Georgia, serif; font-style: italic; font-size: 13pt;
+    color: #445064; max-width: 130mm; margin-bottom: 14mm;
+  }
+  .cover .meta-box {
+    border-left: 3px solid #1a5270; padding: 4mm 0 4mm 6mm;
+    font-family: Arial, sans-serif; font-size: 9.5pt; color: #3a4454; max-width: 120mm;
+  }
+  .cover .meta-box div { margin-bottom: 2mm; }
+  .cover .meta-box b { color: #12212e; }
+
+  h2 {
+    font-family: Arial, sans-serif; font-size: 15pt; font-weight: 700; color: #12212e;
+    border-bottom: 2px solid #1a5270; padding-bottom: 2mm; margin: 12mm 0 5mm;
+    page-break-after: avoid;
+  }
+  h2:first-of-type { margin-top: 0; }
+  h3 {
+    font-family: Arial, sans-serif; font-size: 11.5pt; font-weight: 700; color: #1a5270;
+    margin: 7mm 0 3mm; page-break-after: avoid;
+  }
+  p { margin: 0 0 3.2mm; text-align: justify; orphans: 3; widows: 3; }
+  strong { color: #12212e; }
+  code {
+    font-family: "Consolas", "Courier New", monospace; font-size: 9.3pt;
+    background: #eef1f6; color: #1a5270; padding: 0.5px 4px; border-radius: 3px;
+  }
+  pre {
+    font-family: "Consolas", "Courier New", monospace; font-size: 8.6pt; line-height: 1.45;
+    background: #12212e; color: #dbe6ee; padding: 3mm 4mm; border-radius: 2mm;
+    overflow-x: auto; margin: 0 0 4mm;
+  }
+  ul, ol { margin: 0 0 3.5mm; padding-left: 5.5mm; }
+  li { margin-bottom: 1.6mm; text-align: justify; }
+
+  .callout {
+    background: #eef4f6; border-left: 3px solid #1a5270; padding: 3.5mm 5mm;
+    margin: 4mm 0 5mm; font-family: Arial, sans-serif; font-size: 9.6pt; color: #2a3444;
+  }
+  .callout b { color: #12212e; }
+  .callout.warn { background: #f8f1e6; border-left-color: #a8631f; }
+
+  table {
+    width: 100%; border-collapse: collapse; margin: 3mm 0 5mm;
+    font-family: Arial, sans-serif; font-size: 9pt;
+  }
+  th, td { border: 1px solid #d7dce4; padding: 2.2mm 3mm; text-align: left; vertical-align: top; }
+  th {
+    background: #1a5270; color: #ffffff; font-weight: 600; font-size: 8.6pt;
+    text-transform: uppercase; letter-spacing: .4px;
+  }
+  tr:nth-child(even) td { background: #f4f6f9; }
+  td code { font-size: 8.6pt; }
+  td.num { font-family: "Consolas", monospace; text-align: right; }
+  th.num { text-align: right; }
+
+  .stats-row { display: flex; gap: 4mm; margin: 4mm 0 6mm; }
+  .stat-tile {
+    flex: 1; border: 1px solid #d7dce4; border-radius: 2mm; padding: 3mm 3mm; text-align: center;
+  }
+  .stat-tile .n { font-family: Arial, sans-serif; font-weight: 700; font-size: 13.5pt; color: #1a5270; }
+  .stat-tile .k { font-family: Arial, sans-serif; font-size: 7.6pt; color: #5b6472; margin-top: 1mm; }
+
+  figure { margin: 4mm 0 6mm; page-break-inside: avoid; }
+  figure img { display: block; width: 100%; height: auto; border: 1px solid #d7dce4; border-radius: 2mm; }
+  figcaption { font-family: Arial, sans-serif; font-size: 8.4pt; color: #5b6472; margin-top: 2mm; text-align: center; }
+
+  .toc { margin-top: 10mm; font-family: Arial, sans-serif; font-size: 9.5pt; }
+  .toc-title { font-weight: 700; color: #12212e; margin-bottom: 3mm; font-size: 10.5pt; }
+  .toc ol { list-style: none; padding-left: 0; counter-reset: toc; }
+  .toc li { counter-increment: toc; margin-bottom: 1.8mm; color: #2a3444; }
+  .toc li::before { content: counter(toc) ". "; color: #1a5270; font-weight: 700; }
+
+  section { page-break-inside: avoid; }
+</style>
+</head>
+<body>
+
+<!-- ============================ COVER ============================ -->
+<div class="cover">
+  <div class="eyebrow">Détection de fraude bancaire — projet portfolio RNCP</div>
+  <h1>BC05 — API temps réel<br>monitoring &amp; CI/CD</h1>
+  <p class="subtitle">
+    Faire sortir le modèle du BC03 du notebook : une API conteneurisée qui
+    répond en moins de 60 ms avec une explication SHAP par décision, un
+    monitoring Evidently qui surveille sa dérive, et un pipeline CI/CD qui
+    teste et construit l'image à chaque changement.
+  </p>
+  <div class="meta-box">
+    <div><b>Bloc de compétences :</b> BC05 — API temps réel, monitoring, conteneurisation</div>
+    <div><b>Modèle servi :</b> LightGBM du BC03 (AUC 0,998, seuil optimisé 0,98)</div>
+    <div><b>Stack :</b> FastAPI · Docker · Redis (BC01) · Evidently AI · GitHub Actions</div>
+    <div><b>Document :</b> note d'architecture et guide de lecture des résultats</div>
+  </div>
+
+  <div class="toc">
+    <div class="toc-title">Sommaire</div>
+    <ol>
+      <li>Objectif du bloc BC05</li>
+      <li>Argumentaire méthodologique</li>
+      <li>API de scoring — architecture et endpoints</li>
+      <li>Résultats — latence et explicabilité en conditions réelles</li>
+      <li>Conteneurisation — deux incidents réels, deux corrections</li>
+      <li>Monitoring Evidently — détection de dérive</li>
+      <li>CI/CD — pipeline et ce qui est réellement vérifié</li>
+      <li>Synthèse et implications pour le BC06</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ============================ 1. OBJECTIF ============================ -->
+<h2>1. Objectif du bloc BC05</h2>
+
+<p>
+Un modèle qui vit dans un notebook ne protège aucun client. Le BC05 fait passer le LightGBM du
+BC03 du statut d'artefact évalué hors-ligne à celui de service interrogeable en temps réel : une
+API qui reçoit une transaction, la score en moins de 200 ms, explique sa décision, et tourne dans
+un conteneur reproductible plutôt que sur la machine de développement. Deux garde-fous
+accompagnent ce passage en production : un monitoring qui détecte quand les données réelles
+s'écartent de celles sur lesquelles le modèle a été entraîné, et un pipeline d'intégration
+continue qui empêche qu'une régression atteigne l'image livrée sans être testée au préalable.
+</p>
+
+<!-- ============================ 2. METHODO ============================ -->
+<h2>2. Argumentaire méthodologique</h2>
+
+<p>
+L'API n'embarque pas l'ensemble de l'environnement du projet : une image de service n'a besoin ni
+de <code>psycopg2</code>, ni de <code>confluent-kafka</code>, ni de TensorFlow, ni de Matplotlib —
+seulement de ce qui sert une prédiction. <code>requirements-api.txt</code> isole ce sous-ensemble
+strict, ce qui réduit la taille de l'image et sa surface d'attaque, deux préoccupations réelles en
+production que <code>requirements.txt</code> (pensé pour l'entraînement et l'analyse) ne
+partage pas.
+</p>
+<p>
+L'explicabilité SHAP, développée hors-ligne au BC03 pour analyser des lots de transactions, est ici
+recalculée à la volée pour chaque requête. Le coût est mesuré, pas supposé : un
+<code>TreeExplainer</code> initialisé une seule fois au démarrage du service évalue une ligne en
+quelques millisecondes, ce qui laisse une marge confortable sous la contrainte des 200 ms. C'est
+ce qui permet à l'API de répondre, pour chaque transaction, non seulement un score mais aussi
+« pourquoi » — la même obligation RGPD Art. 22 déjà posée au BC03, désormais tenue en production
+et non plus seulement démontrée sur un échantillon a posteriori.
+</p>
+<p>
+Le feature store Redis construit au BC01 pour le streaming retrouve ici son usage prévu : si la
+requête porte un <code>client_id</code> connu, l'API interroge Redis pour joindre à la réponse les
+compteurs temps réel (<code>nb_tx_1h</code>, <code>montant_cumul_1h</code>) — à titre
+<strong>informatif</strong>, sans les injecter dans le modèle, qui n'a pas été entraîné avec ces
+variables. Redis étant une dépendance non critique de cette lecture d'appoint, sa perte ne doit
+jamais faire échouer une prédiction : l'API teste la connexion au démarrage et dégrade
+silencieusement (<code>features_temps_reel: null</code>) si elle échoue, plutôt que de renvoyer
+une erreur 500 pour un enrichissement secondaire.
+</p>
+
+<!-- ============================ 3. API ============================ -->
+<h2>3. API de scoring — architecture et endpoints</h2>
+
+<table>
+<thead><tr><th>Endpoint</th><th>Rôle</th></tr></thead>
+<tbody>
+<tr><td><code>GET /health</code></td><td>Statut, version du modèle, AUC de référence, seuil optimisé, disponibilité</td></tr>
+<tr><td><code>POST /api/v1/predict</code></td><td>Score de fraude, niveau de risque, top 5 facteurs SHAP, latence</td></tr>
+<tr><td><code>GET /docs</code></td><td>Documentation Swagger interactive, générée automatiquement par FastAPI</td></tr>
+</tbody>
+</table>
+
+<pre>POST /api/v1/predict
+{
+  "montant": 850.0, "distance_domicile_km": 320.5, "revenu_mensuel_net": 2100.0,
+  "heure": 3, "jour_semaine": 5, "mois": 7,
+  "is_weekend": false, "is_nuit": true,
+  "authentification": "none", "canal": "en_ligne", "segment": "particulier"
+}
+
+200 OK
+{
+  "score": 1.0, "seuil_defaut": 0.5, "seuil_optimise": 0.98,
+  "is_fraud_seuil_defaut": true, "is_fraud_seuil_optimise": true,
+  "risk_level": "eleve",
+  "top_features": [
+    {"feature": "distance_domicile_km", "impact": 11.508},
+    {"feature": "heure", "impact": 4.5644},
+    {"feature": "montant", "impact": 3.6543}
+  ],
+  "latence_ms": 24.17
+}</pre>
+
+<div class="callout">
+  <b>Trois seuils, trois usages.</b> <code>is_fraud_seuil_defaut</code> (0,5) et
+  <code>is_fraud_seuil_optimise</code> (0,98) sont renvoyés côté à côté plutôt qu'une seule
+  décision binaire : le BC03 a montré que le second maximise le F1, mais qu'un arbitrage métier
+  pourrait légitimement préférer un seuil intermédiaire. L'API expose les deux lectures et laisse
+  le système appelant — ou l'analyste — trancher, au lieu de figer un choix qui relève du BC06.
+</div>
+
+<!-- ============================ 4. RESULTATS ============================ -->
+<h2>4. Résultats — latence et explicabilité en conditions réelles</h2>
+
+<p>
+Les temps de réponse ci-dessous sont mesurés sur l'image conteneurisée, pas sur un environnement
+de développement optimisé — c'est la latence que verrait un système appelant en production.
+</p>
+
+<div class="stats-row">
+  <div class="stat-tile"><div class="n">24-60 ms</div><div class="k">latence observée (conteneur)</div></div>
+  <div class="stat-tile"><div class="n">&lt; 200 ms</div><div class="k">contrainte réglementaire du projet</div></div>
+  <div class="stat-tile"><div class="n">7 / 7</div><div class="k">tests automatisés au vert</div></div>
+</div>
+
+<p>
+Sur une transaction test (850 €, 320 km du domicile, 3 h du matin, en ligne, sans authentification),
+l'API renvoie un score de 1,000 et identifie <code>distance_domicile_km</code> comme facteur
+dominant (+11,51 en log-cote), suivi de <code>heure</code> (+4,56) — exactement la signature
+<code>vol_carte_physique</code>/<code>usurpation_identite</code> déjà caractérisée au BC01/BC03.
+À l'inverse, une transaction de 42,50 € en journée avec code PIN reçoit un score de 0,000. Ces deux
+cas, ainsi que le rejet propre d'une valeur de canal invalide (422, pas une erreur serveur) et
+l'enrichissement Redis vérifié de bout en bout (un client réellement actif dans le flux du BC01
+renvoie ses compteurs temps réel dans la réponse), sont couverts par la suite de tests automatisés.
+</p>
+
+<!-- ============================ 5. DOCKER ============================ -->
+<h2>5. Conteneurisation — deux incidents réels, deux corrections</h2>
+
+<p>
+La construction de l'image n'a pas été immédiate, et les deux incidents rencontrés sont documentés
+ici plutôt que passés sous silence : ce sont exactement le genre de blocages qu'un environnement de
+conteneurisation réel produit, et leur résolution fait partie du livrable.
+</p>
+
+<table>
+<thead><tr><th>Incident</th><th>Cause</th><th>Correction</th></tr></thead>
+<tbody>
+<tr>
+  <td>Échec SSL lors de <code>pip install</code></td>
+  <td>Le conteneur ne dispose pas du certificat racine du proxy réseau de cet environnement de développement</td>
+  <td><code>--trusted-host</code> sur les trois hôtes PyPI — sans incidence sur un réseau standard</td>
+</tr>
+<tr>
+  <td><code>libgomp.so.1: cannot open shared object file</code> au démarrage</td>
+  <td>LightGBM requiert le runtime OpenMP (<code>libgomp1</code>), absent de l'image <code>python:3.10-slim</code></td>
+  <td><code>apt-get install libgomp1</code> avant l'installation des dépendances Python</td>
+</tr>
+</tbody>
+</table>
+
+<p>
+Le second incident illustre une limite générale des images « slim » : elles suppriment des
+bibliothèques système que Python ne réclame qu'indirectement, via les extensions compilées de ses
+dépendances. Le healthcheck Docker (<code>HEALTHCHECK</code> dans le Dockerfile, qui interroge
+<code>/health</code> toutes les 15 secondes) est justement ce qui aurait signalé ce défaut de
+démarrage en production avant qu'un système de routage n'envoie du trafic vers un conteneur mort.
+</p>
+
+<!-- ============================ 6. EVIDENTLY ============================ -->
+<h2>6. Monitoring Evidently — détection de dérive</h2>
+
+<p>
+Deux scénarios sont comparés à la même référence (l'échantillon d'entraînement du BC03) : le test
+du BC03 tel quel, et une version où trois variables — heure, montant, mois — sont délibérément
+décalées pour simuler une évolution des habitudes de fraude. Le scénario normal détecte une dérive
+sur 9,1 % des colonnes (1 sur 11, sous le seuil d'alerte de 20 %) ; le scénario simulé en détecte
+27,3 % (3 sur 11), déclenchant l'alerte.
+</p>
+
+<figure>
+  <img src="../outputs/capture_normal.png" alt="Rapport Evidently AI, scénario normal : 9,1% de colonnes en dérive, aucune alerte">
+  <figcaption>Figure 1 — Scénario normal : 9,1 % de colonnes en dérive, sous le seuil d'alerte.</figcaption>
+</figure>
+
+<figure>
+  <img src="../outputs/capture_derive.png" alt="Rapport Evidently AI, scénario de dérive simulée : 27,3% de colonnes en dérive sur heure, montant et mois, alerte déclenchée">
+  <figcaption>Figure 2 — Scénario de dérive simulée : 27,3 % de colonnes en dérive (heure, montant, mois), alerte déclenchée.</figcaption>
+</figure>
+
+<div class="callout">
+  <b>Un résultat qui n'était pas entièrement prévu.</b> La colonne <code>mois</code> apparaît en
+  dérive dans le scénario <em>normal</em> également (score de Wasserstein le plus élevé des deux
+  rapports), sans qu'aucun décalage n'y ait été simulé. La cause est le split temporel lui-même :
+  le train du BC03 couvre dix mois de l'année quand le test n'en couvre que les deux ou trois
+  derniers — leurs distributions de <code>mois</code> diffèrent donc réellement, par construction
+  du découpage chronologique, pas par un changement de comportement des fraudeurs. C'est un rappel
+  utile : un split temporel, nécessaire pour évaluer un modèle sans fuite d'information (BC03,
+  section 2), produit par lui-même un déséquilibre calendaire qu'un monitoring de dérive détectera
+  — sans qu'il s'agisse d'une anomalie à corriger.
+</div>
+
+<!-- ============================ 7. CI/CD ============================ -->
+<h2>7. CI/CD — pipeline et ce qui est réellement vérifié</h2>
+
+<p>
+Le pipeline (<code>.github/workflows/ci-cd.yml</code>) exécute deux jobs à chaque push ou pull
+request vers <code>main</code> : <code>test</code> installe les dépendances de service et lance la
+suite pytest ; <code>build-image</code> construit l'image Docker, la démarre, et interroge
+<code>/health</code> jusqu'à quinze fois avant d'échouer — la même vérification que celle menée
+manuellement à la section 5, automatisée. La publication de l'image sur GitHub Container Registry
+(<code>ghcr.io</code>) est conditionnée à un push sur <code>main</code> : jamais sur une pull
+request, pour qu'aucune image non relue ne devienne accessible.
+</p>
+
+<table>
+<thead><tr><th>Étape</th><th>Statut de vérification</th></tr></thead>
+<tbody>
+<tr><td>Tests pytest (7 cas)</td><td>✅ Exécutés en local avec succès — étape identique à celle du workflow</td></tr>
+<tr><td><code>docker build</code> de l'image de service</td><td>✅ Exécuté en local avec succès — corrige les deux incidents de la section 5</td></tr>
+<tr><td>Démarrage du conteneur + <code>/health</code></td><td>✅ Exécuté en local avec succès — même séquence que le job CI</td></tr>
+<tr><td>Exécution effective sur GitHub Actions</td><td>⏳ Non vérifiée — nécessite un dépôt distant, hors périmètre de cette session</td></tr>
+</tbody>
+</table>
+
+<div class="callout warn">
+  <b>Honnêteté sur ce qui est prouvé.</b> Chaque étape du workflow a été rejouée manuellement,
+  dans l'ordre exact où GitHub Actions les exécuterait, et réussit. Ce qui n'a <em>pas</em> été
+  vérifié, faute de dépôt distant configuré pour ce projet, c'est l'exécution du fichier YAML par
+  de vrais runners GitHub. La distinction est délibérément maintenue explicite plutôt que
+  présentée comme équivalente : un pipeline non exécuté sur son infrastructure cible reste, jusqu'à
+  preuve du contraire, un fichier de configuration testé indirectement.
+</div>
+
+<!-- ============================ 8. SYNTHESE ============================ -->
+<h2>8. Synthèse et implications pour le BC06</h2>
+
+<p>
+Le BC05 clôt la chaîne technique du projet : un modèle entraîné et expliqué (BC03), comparé à des
+approches alternatives (BC04), est désormais servi par une API conteneurisée, mesurée sous la
+contrainte de latence réglementaire, et surveillée pour sa dérive. Trois éléments restent
+directement du ressort du BC06 : l'arbitrage entre les deux seuils exposés par l'API (0,5 et 0,98)
+relève d'une décision métier sur le coût comparé d'une fraude manquée et d'une fausse alerte,
+déjà posée mais non tranchée au BC03 ; la fréquence à laquelle
+<code>drift_report.py</code> devrait tourner en production, et la procédure de réentraînement
+qu'une alerte de dérive devrait déclencher, restent à formaliser ; et la conformité RGPD, déjà
+posée par l'explicabilité SHAP embarquée ici, mérite d'être complétée par un registre des décisions
+automatisées et leur durée de conservation.
+</p>
+
+</body>
+</html>

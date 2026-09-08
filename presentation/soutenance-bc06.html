@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Soutenance BC06</title>
+<style>
+  @page { size: 338.67mm 190.5mm; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: Arial, "Segoe UI", Helvetica, sans-serif;
+    color: #1c2230;
+    background: #ffffff;
+  }
+  section.slide {
+    width: 338.67mm; height: 190.5mm;
+    padding: 14mm 18mm 12mm;
+    page-break-after: always;
+    display: flex; flex-direction: column;
+    position: relative;
+  }
+  section.slide:last-of-type { page-break-after: auto; }
+
+  .eyebrow {
+    font-size: 12pt; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    color: #164b60; margin-bottom: 4mm;
+  }
+  h1 {
+    font-size: 27pt; font-weight: 700; color: #12212e; margin: 0 0 8mm; line-height: 1.15;
+    max-width: 90%;
+  }
+  .footer {
+    position: absolute; bottom: 8mm; left: 18mm; right: 18mm;
+    display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid #d7dce4; padding-top: 3mm;
+    font-size: 9pt; color: #8790a0;
+  }
+  .body { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 6mm; }
+
+  .title-slide { justify-content: center; align-items: flex-start; background: #12212e; color: #fff; }
+  .title-slide .eyebrow { color: #7fb8cc; }
+  .title-slide h1 { color: #fff; font-size: 34pt; max-width: 80%; }
+  .title-slide .sub { font-size: 15pt; color: #b9c4cf; max-width: 75%; margin-bottom: 10mm; }
+  .title-slide .meta { font-size: 11pt; color: #8fa0ac; }
+  .title-slide .meta b { color: #dbe6ee; }
+
+  ul.big { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 5mm; }
+  ul.big li { font-size: 15pt; line-height: 1.4; padding-left: 8mm; position: relative; max-width: 92%; }
+  ul.big li::before { content: "→"; position: absolute; left: 0; color: #164b60; font-weight: 700; }
+  ul.big li b { color: #12212e; }
+  ul.small { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 3.5mm; }
+  ul.small li { font-size: 12.5pt; line-height: 1.4; padding-left: 6mm; position: relative; }
+  ul.small li::before { content: "•"; position: absolute; left: 0; color: #a8631f; font-weight: 700; }
+
+  .stats { display: flex; gap: 8mm; }
+  .stat { flex: 1; border: 1.5px solid #d7dce4; border-radius: 3mm; padding: 6mm; text-align: center; }
+  .stat .n { font-size: 26pt; font-weight: 700; color: #164b60; display: block; }
+  .stat .k { font-size: 10.5pt; color: #5b6472; margin-top: 2mm; }
+  .stat.ok .n { color: #2f6b4f; }
+  .stat.warn .n { color: #a8631f; }
+  .stat.bad .n { color: #a5433a; }
+
+  .cols { display: flex; gap: 10mm; flex: 1; align-items: center; }
+  .col { flex: 1; }
+  .col.img { display: flex; align-items: center; justify-content: center; }
+  .col img { max-width: 100%; max-height: 130mm; border: 1px solid #d7dce4; border-radius: 2mm; }
+  figure.full { margin: 0 0 4mm; min-height: 0; text-align: center; flex: 0 1 auto; display: flex; align-items: center; justify-content: center; }
+  figure.full img { max-width: 100%; max-height: 84mm; border: 1px solid #d7dce4; border-radius: 2mm; }
+
+  table.slide-table { width: 100%; border-collapse: collapse; font-size: 12pt; }
+  table.slide-table th, table.slide-table td { border: 1px solid #d7dce4; padding: 3mm 4mm; text-align: left; }
+  table.slide-table th { background: #164b60; color: #fff; font-size: 10.5pt; text-transform: uppercase; letter-spacing: .3px; }
+  table.slide-table tr:nth-child(even) td { background: #f4f6f9; }
+  table.slide-table td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  table.slide-table.dense th, table.slide-table.dense td { padding: 2.4mm 3.5mm; font-size: 10.8pt; }
+  .pill { display: inline-block; padding: 1.5mm 4mm; border-radius: 20px; font-size: 10.5pt; font-weight: 700; }
+  .pill.ok { background: #e6f1eb; color: #2f6b4f; }
+  .pill.ko { background: #f6e6e3; color: #a5433a; }
+
+  .callout { background: #eef4f6; border-left: 4px solid #164b60; padding: 5mm 7mm; font-size: 13.5pt; line-height: 1.45; }
+  .callout b { color: #12212e; }
+  .callout.warn { background: #fbeee6; border-left-color: #a8631f; }
+  .highlight { font-size: 20pt; font-weight: 700; color: #164b60; text-align: center; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 6mm 10mm; }
+  .chip-row { display: flex; flex-wrap: wrap; gap: 4mm; }
+  .chip { border: 1.5px solid #d7dce4; border-radius: 3mm; padding: 4mm 5mm; font-size: 11.5pt; flex: 1 1 40%; }
+  .chip b { display: block; color: #164b60; font-size: 10pt; text-transform: uppercase; letter-spacing: .3px; margin-bottom: 1.5mm; }
+
+  .timeline { display: flex; align-items: stretch; gap: 0; }
+  .tl-step { flex: 1; text-align: center; position: relative; padding: 0 3mm; }
+  .tl-step:not(:last-child)::after {
+    content: "→"; position: absolute; right: -1mm; top: 6mm; color: #a8b0bd; font-size: 14pt;
+  }
+  .tl-step .tl-n { font-size: 15pt; font-weight: 700; color: #164b60; }
+  .tl-step .tl-k { font-size: 10.5pt; color: #5b6472; margin-top: 1.5mm; line-height: 1.3; }
+</style>
+</head>
+<body>
+
+<!-- ===================== TITRE ===================== -->
+<section class="slide title-slide">
+  <div class="eyebrow">Soutenance — Titre RNCP</div>
+  <h1>BC06 — Gestion de projet,<br>conformité &amp; pilotage</h1>
+  <div class="sub">Clore le projet par des livrables exécutables plutôt que déclaratifs : conformité RGPD auditée, KPIs métier chiffrés, bilan critique.</div>
+  <div class="meta">Suite de BC01 à BC05 · 400 000 transactions · <b>github.com/k-b-mansour/Detection-Fraude-</b></div>
+</section>
+
+<!-- ===================== 1. Enjeu & méthode ===================== -->
+<section class="slide">
+  <div class="eyebrow">BC06 — Gestion de projet</div>
+  <h1>Deux livrables, une même exigence</h1>
+  <div class="body">
+    <ul class="big">
+      <li><b>Un audit RGPD exécutable</b> — des requêtes SQL sur <code>information_schema</code>, pas une checklist déclarative : le résultat reflète le schéma réel, pas une intention</li>
+      <li><b>Des KPIs métier</b> — traduire les métriques statistiques du BC03 (F1, précision/rappel) en euros, seul terrain sur lequel un arbitrage de seuil se décide en entreprise</li>
+      <li><b>Un bilan de projet</b> — rétrospective chiffrée des 11 incidents réels rencontrés sur BC01→BC05, corrigés et documentés plutôt que dissimulés</li>
+    </ul>
+  </div>
+  <div class="footer"><span>BC06 — Gestion de projet</span><span>1 / 7</span></div>
+</section>
+
+<!-- ===================== 2. Audit RGPD ===================== -->
+<section class="slide">
+  <div class="eyebrow">BC06 — Conformité</div>
+  <h1>Audit RGPD : 6 / 8 contrôles conformes</h1>
+  <div class="body">
+    <div class="stats">
+      <div class="stat ok"><span class="n">6 / 8</span><span class="k">contrôles conformes</span></div>
+      <div class="stat bad"><span class="n">2</span><span class="k">non-conformités réelles identifiées</span></div>
+      <div class="stat warn"><span class="n">1</span><span class="k">faux positif trouvé et corrigé avant publication</span></div>
+    </div>
+    <div class="grid2">
+      <div class="chip"><b>Conforme</b>Minimisation, pseudonymisation (UUID), pas de données de carte, SHAP par décision (Art. 22), traçabilité ops.*</div>
+      <div class="chip"><b>Non conforme</b>Pas de politique de purge/rétention · secrets de dev en clair dans le dépôt (<code>fraud_secret</code>)</div>
+    </div>
+  </div>
+  <div class="footer"><span>BC06 — Gestion de projet</span><span>2 / 7</span></div>
+</section>
+
+<!-- ===================== 3. Faux positif RGPD ===================== -->
+<section class="slide">
+  <div class="eyebrow">BC06 — Conformité</div>
+  <h1>Un faux positif corrigé, pas masqué</h1>
+  <div class="body">
+    <ul class="big">
+      <li><code>dwh.dim_agences.nom</code> a été signalé par le contrôle naïf « colonne contenant nom » comme donnée personnelle</li>
+      <li>En réalité : nom d'une agence bancaire (ex. « Agence Paris Opéra ») — donnée organisationnelle, pas une donnée d'une personne physique</li>
+      <li>Correction : exclusion explicite <code>tables_hors_perimetre_personne = {"dim_agences"}</code>, justifiée par un commentaire dans le code — pas une suppression silencieuse de l'alerte</li>
+    </ul>
+    <div class="callout">Principe appliqué sur tout le projet : chaque incident est documenté avec sa cause réelle, jamais retiré sans trace.</div>
+  </div>
+  <div class="footer"><span>BC06 — Gestion de projet</span><span>3 / 7</span></div>
+</section>
+
+<!-- ===================== 4. KPIs métier ===================== -->
+<section class="slide">
+  <div class="eyebrow">BC06 — KPIs métier</div>
+  <h1>Traduire le F1-score en euros</h1>
+  <div class="cols">
+    <div class="col img"><img src="../bc06_gestion_projet/outputs/01_impact_financier_seuils.png"></div>
+    <div class="col">
+      <ul class="big">
+        <li>80 000 transactions de test, <b>297 239 €</b> de fraude totale</li>
+        <li>Seuil 0,50 (défaut) : bénéfice net <b>286 820 €</b></li>
+        <li>Seuil 0,98 (optimisé F1, BC03) : bénéfice net <b>265 919 €</b></li>
+        <li>Coût d'une fausse alerte : 8 € (hypothèse explicite, à valider avec le métier)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer"><span>BC06 — Gestion de projet</span><span>4 / 7</span></div>
+</section>
+
+<!-- ===================== 5. Constat clé ===================== -->
+<section class="slide">
+  <div class="eyebrow">BC06 — KPIs métier</div>
+  <h1>Le seuil F1-optimal n'est pas le plus rentable</h1>
+  <div class="body">
+    <div class="highlight">20 901 € de bénéfice net en plus au seuil 0,50 qu'au seuil 0,98</div>
+    <div class="callout warn">Le coût d'une fraude manquée (montant réel de la transaction) dépasse largement le coût d'une fausse alerte (8 €) : optimiser le F1-score optimise un compromis statistique, pas un résultat financier — ces deux objectifs peuvent diverger.</div>
+    <ul class="small">
+      <li>Confirme, chiffres à l'appui, la réserve posée dès la section 6 du rapport BC03</li>
+      <li>Conclusion opérationnelle : le choix de seuil doit être arbitré avec le métier, pas figé sur une métrique ML seule</li>
+    </ul>
+  </div>
+  <div class="footer"><span>BC06 — Gestion de projet</span><span>5 / 7</span></div>
+</section>
+
+<!-- ===================== 6. Bilan / rétrospective ===================== -->
+<section class="slide">
+  <div class="eyebrow">BC06 — Bilan de projet</div>
+  <h1>Onze incidents réels, du BC01 au BC05</h1>
+  <div class="body">
+    <table class="slide-table dense">
+      <tr><th>Bloc</th><th>Incidents</th><th>Exemple</th></tr>
+      <tr><td>BC01 — Socle de données</td><td class="num">3</td><td>Clé <code>transaction_bk</code> trop étroite, dédup Redis marquée trop tôt, membre « Inconnu » écrasé par le TRUNCATE</td></tr>
+      <tr><td>BC02 — Analyse exploratoire</td><td class="num">0</td><td>—</td></tr>
+      <tr><td>BC03 — Modèles supervisés</td><td class="num">0</td><td>—</td></tr>
+      <tr><td>BC04 — Deep Learning</td><td class="num">2</td><td>Séquence LSTM excluant la transaction courante (AUC 0,49), instabilité d'entraînement</td></tr>
+      <tr><td>BC05 — API &amp; monitoring</td><td class="num">5</td><td>Lifespan FastAPI non déclenché en test, <code>libgomp1</code> manquant, 3 échecs CI/CD réels</td></tr>
+      <tr><td>BC06 — Gestion de projet</td><td class="num">1</td><td>Faux positif RGPD sur <code>dim_agences.nom</code></td></tr>
+    </table>
+  </div>
+  <div class="footer"><span>BC06 — Gestion de projet</span><span>6 / 7</span></div>
+</section>
+
+<!-- ===================== 7. Décisions structurantes / limites / conclusion ===================== -->
+<section class="slide">
+  <div class="eyebrow">BC06 — Bilan de projet</div>
+  <h1>Décisions structurantes, limites, feuille de route</h1>
+  <div class="body">
+    <div class="grid2">
+      <div class="chip"><b>Décisions qui ont tenu</b>Split temporel plutôt qu'aléatoire · fonction SQL de transformation unique batch+stream · membre « Inconnu » plutôt que perte silencieuse</div>
+      <div class="chip"><b>Limites assumées</b>Générateur synthétique sans corrélation inter-transactions (BC04) · coût de fausse alerte hypothétique (BC06) · pas de rotation de secrets</div>
+      <div class="chip"><b>Feuille de route</b>Politique de rétention/purge · gestion de secrets (vault) · validation du coût métier réel avec les équipes fraude</div>
+      <div class="chip"><b>Conclusion</b>Pipeline bout-en-bout socle → modèles → API → conformité, vérifié à chaque étape par l'exécution réelle, pas par la documentation seule</div>
+    </div>
+  </div>
+  <div class="footer"><span>BC06 — Gestion de projet</span><span>7 / 7</span></div>
+</section>
+
+</body>
+</html>

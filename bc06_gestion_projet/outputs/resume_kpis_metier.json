@@ -1,0 +1,26 @@
+{
+  "hypotheses": {
+    "cout_fausse_alerte_eur": 8.0,
+    "facteur_annualisation": 4.8,
+    "note": "Test = derniers ~2,5 mois de l'année simulée ; annualisation = extrapolation linéaire, pas une mesure."
+  },
+  "montant_fraude_totale_test_eur": 297238.8,
+  "seuil_defaut_0_5": {
+    "seuil": 0.5,
+    "montant_fraude_evite_eur": 292884.17,
+    "montant_fraude_manque_eur": 4354.63,
+    "n_fausses_alertes": 758,
+    "cout_fausses_alertes_eur": 6064.0,
+    "benefice_net_eur": 286820.17,
+    "benefice_net_annualise_eur": 1376736.82
+  },
+  "seuil_optimise_0_98": {
+    "seuil": 0.98,
+    "montant_fraude_evite_eur": 266894.56,
+    "montant_fraude_manque_eur": 30344.24,
+    "n_fausses_alertes": 122,
+    "cout_fausses_alertes_eur": 976.0,
+    "benefice_net_eur": 265918.56,
+    "benefice_net_annualise_eur": 1276409.09
+  }
+}

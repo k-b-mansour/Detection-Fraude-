@@ -2,6 +2,8 @@
 
 Projet portfolio — Titre RNCP — Pipeline ML/DL end-to-end de détection de fraude sur transactions financières.
 
+**Projet complet, BC01 → BC06.** Dépôt : https://github.com/k-b-mansour/Detection-Fraude-
+
 Données simulées — 5 000 clients · 400 000 transactions (paramétrable, voir [bc01_socle_donnees/docs/BC01.md](bc01_socle_donnees/docs/BC01.md))
 
 Infrastructure (Docker, dépendances Python) mutualisée à la racine ; chaque bloc de compétences
@@ -11,61 +13,72 @@ a son propre dossier, autonome, avec son code et sa documentation.
 
 ```
 projet_expo/
-├── docker-compose.yml         infra partagée : Postgres, Redis, Kafka, Adminer, Kafka UI
-├── requirements.txt           dépendances Python partagées
+├── docker-compose.yml         infra partagée : Postgres, Redis, Kafka, Adminer, Kafka UI, API
+├── requirements.txt           dépendances Python partagées (entraînement/analyse)
+├── .github/workflows/ci-cd.yml
 ├── .env.example
 │
 ├── bc01_socle_donnees/        ✅ architecture Data Warehouse, ingestion batch + streaming
-│   ├── sql/                   schéma en étoile (staging → dwh → mart → ops)
-│   ├── data/seed.py           génération des données synthétiques (voie batch)
-│   ├── streaming/             producer.py / consumer.py (voie Kafka)
-│   ├── scripts/quality_checks.py
-│   └── docs/                  BC01.md, story map, page "socle de données"
-│
-├── bc02_analyse_exploratoire/ à venir — déséquilibre de classes, profiling, anomalies univariées
-├── bc03_modeles_supervises/   à venir — Logistic Regression, Gradient Boosting, SMOTE
-├── bc04_deep_learning/        à venir — autoencodeurs, embeddings de séquences
-├── bc05_api_monitoring/       à venir — API FastAPI, monitoring de dérive Evidently
-└── bc06_gestion_projet/       à venir — conformité RGPD, KPIs métier, documentation finale
+├── bc02_analyse_exploratoire/ ✅ déséquilibre de classes, profiling, anomalies univariées
+├── bc03_modeles_supervises/   ✅ Logistic Regression, LightGBM, SMOTE, SHAP, seuil de décision
+├── bc04_deep_learning/        ✅ autoencodeur non supervisé, LSTM + embeddings de séquences
+├── bc05_api_monitoring/       ✅ API FastAPI temps réel, monitoring Evidently, Docker, CI/CD
+└── bc06_gestion_projet/       ✅ audit RGPD exécutable, KPIs métier, bilan de projet
 ```
 
 ## Blocs de compétences
 
-| Bloc | Contenu | Statut |
+| Bloc | Contenu | Rapport |
 |---|---|---|
-| **BC01** | Architecture Data Warehouse (schéma en étoile), ingestion streaming simulée avec Kafka, stockage PostgreSQL + Redis | ✅ [bc01_socle_donnees/](bc01_socle_donnees/docs/BC01.md) |
-| **BC02** | Analyse du déséquilibre de classes, profiling des fraudeurs, statistiques descriptives, détection d'anomalies univariées | [à venir](bc02_analyse_exploratoire/README.md) |
-| **BC03** | Modèles supervisés (Logistic Regression, Gradient Boosting), SMOTE, optimisation du seuil de décision | [à venir](bc03_modeles_supervises/README.md) |
-| **BC04** | Autoencoders, réseaux de neurones sur embeddings de séquences | [à venir](bc04_deep_learning/README.md) |
-| **BC05** | API temps réel, scoring en production, monitoring de dérive (Evidently), conteneurisation | [à venir](bc05_api_monitoring/README.md) |
-| **BC06** | Gestion de projet, conformité RGPD, documentation technique, KPIs métier | [à venir](bc06_gestion_projet/README.md) |
+| **BC01** | Architecture Data Warehouse (schéma en étoile staging/dwh/mart/ops), ingestion streaming Kafka, PostgreSQL + Redis | [PDF](bc01_socle_donnees/docs/BC01-explication.pdf) |
+| **BC02** | Déséquilibre de classes, profiling des fraudeurs, statistiques descriptives, anomalies univariées | [PDF](bc02_analyse_exploratoire/docs/bc02-explication.pdf) |
+| **BC03** | Logistic Regression, LightGBM, SMOTE, SHAP, optimisation du seuil de décision | [PDF](bc03_modeles_supervises/docs/bc03-explication-v2.pdf) |
+| **BC04** | Autoencodeur non supervisé, réseau LSTM sur embeddings de séquences | [PDF](bc04_deep_learning/docs/bc04-explication.pdf) |
+| **BC05** | API de scoring temps réel, monitoring de dérive (Evidently), conteneurisation Docker, CI/CD GitHub Actions | [PDF](bc05_api_monitoring/docs/bc05-explication-v2.pdf) |
+| **BC06** | Audit RGPD exécutable, KPIs métier (impact financier des seuils), bilan de projet | [PDF](bc06_gestion_projet/docs/bc06-explication.pdf) |
 
-## Démarrage rapide (BC01)
+## Démarrage rapide
 
 ```bash
 # 1. Copier la config d'environnement
 cp .env.example .env
 
-# 2. Démarrer l'infrastructure (Postgres + Redis + Adminer + Kafka + Kafka UI)
-docker compose up -d
+# 2. Démarrer l'infrastructure (Postgres, Redis, Kafka, Adminer, Kafka UI, API)
+docker compose up -d --build
 
-# 3. Installer les dépendances Python
+# 3. Installer les dépendances Python (entraînement/analyse)
 pip install -r requirements.txt
 
-# 4. Générer et charger les données synthétiques (staging -> dwh, voie batch)
+# 4. Socle de données (BC01)
 python bc01_socle_donnees/data/seed.py --clients 5000 --transactions 400000 --fraud-rate 0.015
-
-# 5. Vérifier le socle (10 contrôles qualité)
 python bc01_socle_donnees/scripts/quality_checks.py
 
-# 6. Simuler le flux temps réel (2 terminaux séparés)
-python bc01_socle_donnees/streaming/consumer.py
-python bc01_socle_donnees/streaming/producer.py --rate 5
+# 5. Analyse, modèles, deep learning (BC02 → BC04)
+python bc02_analyse_exploratoire/scripts/analyse_exploratoire.py
+python bc03_modeles_supervises/scripts/entrainement_modeles.py
+python bc03_modeles_supervises/scripts/explicabilite_shap.py
+python bc04_deep_learning/scripts/autoencodeur_anomalies.py
+python bc04_deep_learning/scripts/reseau_sequences.py
+
+# 6. Monitoring et conformité (BC05 → BC06)
+python bc05_api_monitoring/scripts/drift_report.py
+python bc06_gestion_projet/scripts/audit_rgpd.py
+python bc06_gestion_projet/scripts/kpis_metier.py
 ```
 
 | Interface | URL |
 |---|---|
 | Adminer (PostgreSQL) | http://localhost:8080 |
 | Kafka UI | http://localhost:8090 |
+| API de scoring (santé) | http://localhost:8001/health |
+| API de scoring (Swagger) | http://localhost:8001/docs |
 
-Détails de l'architecture, du schéma en étoile et des choix de conception : [bc01_socle_donnees/docs/BC01.md](bc01_socle_donnees/docs/BC01.md).
+## Résultat final
+
+- **Modèle retenu** : LightGBM (BC03), AUC-ROC 0,998, servi en production (BC05) à 24-60 ms/requête
+- **Socle** : 400 000 transactions, 10/10 contrôles qualité (BC01), 6/8 conformité RGPD (BC06)
+- **CI/CD** : pipeline réellement vert sur GitHub Actions après 3 itérations documentées (BC05)
+- **KPI métier** : le seuil optimisé au sens F1 (0,98) n'est pas le plus rentable économiquement —
+  le seuil par défaut (0,50) dégage 20 901 € de bénéfice net en plus sur la période de test (BC06)
+- **11 incidents réels** rencontrés et corrigés sur l'ensemble du projet, tous documentés dans les
+  rapports plutôt que dissimulés (détail : [bc06_gestion_projet/docs/bc06-explication.pdf](bc06_gestion_projet/docs/bc06-explication.pdf))

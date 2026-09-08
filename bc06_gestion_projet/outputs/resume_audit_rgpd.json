@@ -1,0 +1,54 @@
+{
+  "n_ok": 6,
+  "n_total": 8,
+  "controles": [
+    {
+      "principe": "Minimisation des données (Art. 5.1.c)",
+      "controle": "Aucune colonne nom/email/IBAN/carte en clair (personnes physiques)",
+      "statut": "OK",
+      "detail": "Aucune colonne suspecte trouvée (dim_agences.nom exclu : donnée d'entreprise, pas de personne physique)"
+    },
+    {
+      "principe": "Pseudonymisation (Art. 4.5, Art. 25)",
+      "controle": "dim_clients.client_id est un UUID opaque",
+      "statut": "OK",
+      "detail": "Type de colonne observé : uuid"
+    },
+    {
+      "principe": "Sécurité des données (Art. 32)",
+      "controle": "Aucun numéro de carte ou CVV stocké",
+      "statut": "OK",
+      "detail": "Colonnes liées à 'carte' présentes (attendu, hors numéro/CVV) : []"
+    },
+    {
+      "principe": "Droit à l'explication (Art. 22)",
+      "controle": "Explication SHAP disponible hors-ligne (BC03) et en ligne (BC05 /predict)",
+      "statut": "OK",
+      "detail": "resume_shap.json présent=True, API de scoring présente=True"
+    },
+    {
+      "principe": "Responsabilisation / accountability (Art. 5.2)",
+      "controle": "Journal des traitements et des contrôles qualité (ops.*)",
+      "statut": "OK",
+      "detail": "ops.log_chargement=présent, ops.controle_qualite=présent"
+    },
+    {
+      "principe": "Limitation de la conservation (Art. 5.1.e)",
+      "controle": "Politique de purge automatique des transactions anciennes",
+      "statut": "KO",
+      "detail": "Aucun mécanisme de purge/archivage n'est implémenté — les transactions restent indéfiniment dans dwh.fact_transactions. À formaliser (durée légale bancaire généralement 5 ans, cf. obligations de lutte anti-blanchiment)."
+    },
+    {
+      "principe": "Sécurité des données (Art. 32)",
+      "controle": "Les secrets ne sont pas commités en clair dans le dépôt",
+      "statut": "KO",
+      "detail": "docker-compose.yml et .env.example fixent le même mot de passe de démonstration ('fraud_secret'), acceptable en local mais à externaliser (GitHub Actions secrets, vault) avant tout déploiement réel."
+    },
+    {
+      "principe": "Droits des personnes (Art. 15-17)",
+      "controle": "Aucune table de correspondance client_id ↔ identité en clair dans ce socle",
+      "statut": "OK",
+      "detail": "Le générateur BC01 ne produit aucune identité réelle : la pseudonymisation est ici irréversible par construction, pas réversible via une table tierce."
+    }
+  ]
+}

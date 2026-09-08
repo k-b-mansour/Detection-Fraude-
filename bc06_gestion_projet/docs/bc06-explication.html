@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>BC06 — Gestion &amp; Conformité</title>
+<style>
+  @page {
+    size: A4;
+    margin: 22mm 20mm 20mm 20mm;
+    @bottom-center {
+      content: "BC06 — Gestion de projet, conformité, KPIs métier · page " counter(page) " / " counter(pages);
+      font-family: Arial, sans-serif;
+      font-size: 8.5pt;
+      color: #6b7280;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 10.8pt;
+    line-height: 1.55;
+    color: #1c2230;
+  }
+
+  .cover { page-break-after: always; padding-top: 50mm; }
+  .cover .eyebrow {
+    font-family: Arial, sans-serif; font-size: 9.5pt; letter-spacing: 2px;
+    text-transform: uppercase; color: #1a5270; margin-bottom: 10mm;
+  }
+  .cover h1 {
+    font-family: Arial, sans-serif; font-size: 26pt; font-weight: 700;
+    color: #12212e; margin: 0 0 6mm; line-height: 1.2;
+  }
+  .cover .subtitle {
+    font-family: Georgia, serif; font-style: italic; font-size: 13pt;
+    color: #445064; max-width: 130mm; margin-bottom: 14mm;
+  }
+  .cover .meta-box {
+    border-left: 3px solid #1a5270; padding: 4mm 0 4mm 6mm;
+    font-family: Arial, sans-serif; font-size: 9.5pt; color: #3a4454; max-width: 122mm;
+  }
+  .cover .meta-box div { margin-bottom: 2mm; }
+  .cover .meta-box b { color: #12212e; }
+
+  h2 {
+    font-family: Arial, sans-serif; font-size: 15pt; font-weight: 700; color: #12212e;
+    border-bottom: 2px solid #1a5270; padding-bottom: 2mm; margin: 12mm 0 5mm;
+    page-break-after: avoid;
+  }
+  h2:first-of-type { margin-top: 0; }
+  h3 {
+    font-family: Arial, sans-serif; font-size: 11.5pt; font-weight: 700; color: #1a5270;
+    margin: 7mm 0 3mm; page-break-after: avoid;
+  }
+  p { margin: 0 0 3.2mm; text-align: justify; orphans: 3; widows: 3; }
+  strong { color: #12212e; }
+  code {
+    font-family: "Consolas", "Courier New", monospace; font-size: 9.3pt;
+    background: #eef1f6; color: #1a5270; padding: 0.5px 4px; border-radius: 3px;
+  }
+  ul, ol { margin: 0 0 3.5mm; padding-left: 5.5mm; }
+  li { margin-bottom: 1.6mm; text-align: justify; }
+
+  .callout {
+    background: #eef4f6; border-left: 3px solid #1a5270; padding: 3.5mm 5mm;
+    margin: 4mm 0 5mm; font-family: Arial, sans-serif; font-size: 9.6pt; color: #2a3444;
+  }
+  .callout b { color: #12212e; }
+  .callout.warn { background: #f8f1e6; border-left-color: #a8631f; }
+  .callout.good { background: #e9f3ee; border-left-color: #2f6b4f; }
+
+  table {
+    width: 100%; border-collapse: collapse; margin: 3mm 0 5mm;
+    font-family: Arial, sans-serif; font-size: 8.8pt;
+  }
+  th, td { border: 1px solid #d7dce4; padding: 2.1mm 2.8mm; text-align: left; vertical-align: top; }
+  th {
+    background: #1a5270; color: #ffffff; font-weight: 600; font-size: 8.4pt;
+    text-transform: uppercase; letter-spacing: .3px;
+  }
+  tr:nth-child(even) td { background: #f4f6f9; }
+  td code { font-size: 8.4pt; }
+  td.num { font-family: "Consolas", monospace; text-align: right; white-space: nowrap; }
+  th.num { text-align: right; }
+  .pill { display: inline-flex; align-items: center; gap: 4px; font-family: "IBM Plex Mono", "Consolas", monospace; font-size: .74rem; font-weight: 600; padding: 1px 7px; border-radius: 20px; }
+  .pill.ok { background: #e6f1eb; color: #2f6b4f; }
+  .pill.ko { background: #f6e6e3; color: #a5433a; }
+
+  .stats-row { display: flex; gap: 4mm; margin: 4mm 0 6mm; }
+  .stat-tile {
+    flex: 1; border: 1px solid #d7dce4; border-radius: 2mm; padding: 3mm 3mm; text-align: center;
+  }
+  .stat-tile .n { font-family: Arial, sans-serif; font-weight: 700; font-size: 13pt; color: #1a5270; }
+  .stat-tile .k { font-family: Arial, sans-serif; font-size: 7.4pt; color: #5b6472; margin-top: 1mm; }
+
+  figure { margin: 4mm 0 6mm; page-break-inside: avoid; }
+  figure img { display: block; width: 100%; height: auto; border: 1px solid #d7dce4; border-radius: 2mm; }
+  figcaption { font-family: Arial, sans-serif; font-size: 8.4pt; color: #5b6472; margin-top: 2mm; text-align: center; }
+
+  .toc { margin-top: 9mm; font-family: Arial, sans-serif; font-size: 9.3pt; }
+  .toc-title { font-weight: 700; color: #12212e; margin-bottom: 3mm; font-size: 10.5pt; }
+  .toc ol { list-style: none; padding-left: 0; counter-reset: toc; }
+  .toc li { counter-increment: toc; margin-bottom: 1.6mm; color: #2a3444; }
+  .toc li::before { content: counter(toc) ". "; color: #1a5270; font-weight: 700; }
+
+  section { page-break-inside: avoid; }
+</style>
+</head>
+<body>
+
+<!-- ============================ COVER ============================ -->
+<div class="cover">
+  <div class="eyebrow">Détection de fraude bancaire — projet portfolio RNCP</div>
+  <h1>BC06 — Gestion de projet<br>conformité RGPD &amp; KPIs métier</h1>
+  <p class="subtitle">
+    Clore les six blocs par un bilan chiffré plutôt qu'un satisfecit : un
+    audit RGPD exécutable qui trouve de vrais manques, et un chiffrage
+    financier qui contredit le seuil « optimal » retenu au BC03.
+  </p>
+  <div class="meta-box">
+    <div><b>Bloc de compétences :</b> BC06 — Gestion de projet, conformité, documentation, KPIs</div>
+    <div><b>Périmètre :</b> rétrospective BC01→BC05, audit RGPD (8 contrôles), impact financier des seuils</div>
+    <div><b>Dépôt :</b> github.com/k-b-mansour/Detection-Fraude-</div>
+    <div><b>Document :</b> bilan de projet et note de conformité</div>
+  </div>
+
+  <div class="toc">
+    <div class="toc-title">Sommaire</div>
+    <ol>
+      <li>Objectif du bloc BC06</li>
+      <li>Argumentaire méthodologique</li>
+      <li>Bilan de projet — rétrospective BC01 → BC05</li>
+      <li>Conformité RGPD — un audit exécutable</li>
+      <li>KPIs métier — l'impact financier des deux seuils</li>
+      <li>Décisions structurantes du projet</li>
+      <li>Limites globales et feuille de route</li>
+      <li>Conclusion générale</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ============================ 1. OBJECTIF ============================ -->
+<h2>1. Objectif du bloc BC06</h2>
+
+<p>
+Les cinq blocs précédents ont produit un système technique complet ; le BC06 lui donne son cadre
+de gouvernance. Trois questions restées ouvertes y sont explicitement tranchées ou, à défaut,
+explicitement documentées comme non tranchées : le système respecte-t-il ses obligations
+réglementaires, quel est son impact financier réel, et que retenir de la manière dont il a été
+construit pour la suite. Aucune de ces trois questions n'appelle une réponse déclarative — chacune
+est instruite ici par une mesure ou un contrôle exécutable, dans la continuité de la méthode suivie
+depuis le BC01.
+</p>
+
+<!-- ============================ 2. METHODO ============================ -->
+<h2>2. Argumentaire méthodologique</h2>
+
+<p>
+L'audit RGPD de la section 4 n'est pas une checklist remplie de mémoire : c'est un script qui
+interroge <code>information_schema</code> et les artefacts réels du projet, sur le même principe
+que <code>quality_checks.py</code> du BC01 — un contrôle est une requête, jamais une affirmation.
+Cette discipline a immédiatement produit un faux positif (détaillé section 4), corrigé avant
+d'être publié : la preuve, s'il en fallait une, qu'un contrôle automatisé vaut mieux qu'une
+relecture manuelle, mais doit lui-même être vérifié avant d'être cru.
+</p>
+<p>
+Les KPIs métier de la section 5 répondent à une question posée sans réponse depuis le BC03 : le
+seuil qui maximise le F1 (0,98) est-il le bon choix économique ? Le F1 traite un euro de fraude
+manquée et un euro de coût de vérification comme équivalents, ce qu'aucune banque ne fait
+réellement. Traduire les deux seuils déjà mesurés en euros — montant de fraude évité, coût des
+fausses alertes à un tarif unitaire explicite — permet de trancher sur le terrain qui compte
+réellement pour une décision de mise en production, plutôt que de laisser le F1 décider par défaut.
+</p>
+
+<!-- ============================ 3. BILAN ============================ -->
+<h2>3. Bilan de projet — rétrospective BC01 → BC05</h2>
+
+<p>
+Le tableau ci-dessous ne retient que des faits vérifiables : livrable produit, résultat chiffré, et
+incidents réels rencontrés puis corrigés — jamais une auto-évaluation qualitative. Onze incidents
+de code distincts ont été rencontrés sur l'ensemble du projet (les conflits de ports avec d'autres
+projets locaux, purement environnementaux, ne sont pas comptés ici), tous documentés dans leur
+bloc d'origine.
+</p>
+
+<table>
+<thead><tr><th>Bloc</th><th>Livrable clé</th><th>Résultat chiffré</th><th class="num">Incidents réels corrigés</th></tr></thead>
+<tbody>
+<tr><td>BC01</td><td>Socle en étoile (staging/dwh/mart/ops)</td><td>400 000 transactions, 10/10 contrôles qualité</td><td class="num">3</td></tr>
+<tr><td>BC02</td><td>Analyse exploratoire</td><td>Pic de fraude 33 % à 4h ; plafond de rappel univarié ≈ 30 %</td><td class="num">0</td></tr>
+<tr><td>BC03</td><td>LightGBM + SHAP</td><td>AUC 0,998 (vs 0,983 régression logistique)</td><td class="num">0*</td></tr>
+<tr><td>BC04</td><td>Autoencodeur + LSTM</td><td>LSTM AUC 0,997, à parité avec le BC03</td><td class="num">2</td></tr>
+<tr><td>BC05</td><td>API + monitoring + CI/CD</td><td>Latence 24-60 ms ; pipeline CI/CD vert sur GitHub Actions</td><td class="num">5</td></tr>
+<tr><td>BC06</td><td>Audit RGPD + KPIs métier</td><td>6/8 contrôles conformes ; seuil 0,50 plus rentable de 20 901 €</td><td class="num">1</td></tr>
+</tbody>
+</table>
+<p style="font-family: Arial, sans-serif; font-size: 8.4pt; color: #5b6472; margin-top: -3mm;">
+* L'explicabilité SHAP du BC03 a été ajoutée après une relecture externe du livrable initial — pas un incident technique, mais une lacune de périmètre corrigée sur retour.
+</p>
+
+<div class="callout">
+  <b>Ce que ce compte révèle.</b> Chaque bloc a produit au moins un résultat qui n'était pas connu
+  à l'avance — un pic horaire, un plafond de rappel, un écart de performance mesuré, une
+  contradiction avec l'intuition (section 5). Documenter les incidents plutôt que les lisser est
+  ce qui rend ces résultats crédibles : un projet où rien ne casse jamais n'a généralement pas été
+  suffisamment mis à l'épreuve.
+</div>
+
+<!-- ============================ 4. RGPD ============================ -->
+<h2>4. Conformité RGPD — un audit exécutable</h2>
+
+<p>
+Huit contrôles, chacun adossé à un principe RGPD nommé, interrogent le schéma réel de la base et
+les artefacts produits par les blocs précédents. Six sont conformes ; deux ne le sont pas,
+signalés comme tels plutôt que reformulés pour paraître conformes.
+</p>
+
+<table>
+<thead><tr><th>Principe</th><th>Contrôle</th><th>Statut</th></tr></thead>
+<tbody>
+<tr><td>Minimisation (Art. 5.1.c)</td><td>Aucune colonne nom/email/IBAN/carte en clair (personnes physiques)</td><td><span class="pill ok">OK</span></td></tr>
+<tr><td>Pseudonymisation (Art. 4.5, 25)</td><td><code>dim_clients.client_id</code> est un UUID opaque</td><td><span class="pill ok">OK</span></td></tr>
+<tr><td>Sécurité (Art. 32)</td><td>Aucun numéro de carte ni CVV stocké</td><td><span class="pill ok">OK</span></td></tr>
+<tr><td>Droit à l'explication (Art. 22)</td><td>SHAP disponible hors-ligne (BC03) et en ligne (BC05)</td><td><span class="pill ok">OK</span></td></tr>
+<tr><td>Accountability (Art. 5.2)</td><td>Journal des traitements et contrôles qualité (<code>ops.*</code>)</td><td><span class="pill ok">OK</span></td></tr>
+<tr><td>Droits des personnes (Art. 15-17)</td><td>Aucune table de correspondance identité ↔ pseudonyme</td><td><span class="pill ok">OK</span></td></tr>
+<tr><td>Conservation limitée (Art. 5.1.e)</td><td>Politique de purge automatique des transactions anciennes</td><td><span class="pill ko">KO</span></td></tr>
+<tr><td>Sécurité (Art. 32)</td><td>Aucun secret commité en clair dans le dépôt</td><td><span class="pill ko">KO</span></td></tr>
+</tbody>
+</table>
+
+<div class="callout warn">
+  <b>Un faux positif trouvé et corrigé avant publication.</b> Le premier passage du contrôle de
+  minimisation a signalé <code>dwh.dim_agences.nom</code> — le nom d'une agence bancaire (« Agence
+  Paris Opéra »), pas celui d'une personne physique. Le motif de détection (recherche du mot
+  « nom ») ne distinguait pas donnée d'entreprise et donnée personnelle. Corrigé en excluant
+  explicitement <code>dim_agences</code>, avec la justification en commentaire dans le script —
+  pas en supprimant silencieusement l'alerte.
+</div>
+<div class="callout warn">
+  <b>Les deux non-conformités sont réelles, pas cosmétiques.</b> Aucune purge automatique
+  n'existe : les transactions s'accumulent indéfiniment dans <code>dwh.fact_transactions</code>
+  (une durée de 5 ans, usuelle en lutte anti-blanchiment, resterait à formaliser). Et
+  <code>docker-compose.yml</code> comme <code>.env.example</code> fixent le même mot de passe de
+  démonstration en clair — acceptable pour un socle de développement local, mais à
+  externaliser (vault, secrets GitHub Actions déjà utilisés au BC05 pour GHCR) avant tout
+  déploiement réel.
+</div>
+
+<!-- ============================ 5. KPIS ============================ -->
+<h2>5. KPIs métier — l'impact financier des deux seuils</h2>
+
+<p>
+Sur les 80 000 transactions de test (1 221 fraudes, 297 239 € de montant frauduleux total), le
+seuil par défaut (0,50) laisse passer 4 355 € de fraude non détectée et coûte 6 064 € en fausses
+alertes (758 × 8 €, hypothèse de coût de vérification explicite) ; le seuil optimisé (0,98) laisse
+passer 30 344 € de fraude non détectée pour seulement 976 € de fausses alertes. Le bénéfice net —
+fraude évitée moins coût des fausses alertes — est <strong>supérieur au seuil 0,50</strong>
+(286 820 €) qu'au seuil 0,98 (265 919 €), un écart de <strong>20 901 €</strong> sur la seule
+période de test.
+</p>
+
+<figure>
+  <img src="../outputs/01_impact_financier_seuils.png" alt="Diagramme en barres comparant fraude évitée, fraude manquée, coût des fausses alertes et bénéfice net pour les seuils 0,50 et 0,98">
+  <figcaption>Figure 1 — Le seuil par défaut, moins bon en F1, dégage un bénéfice net supérieur sur cette hypothèse de coût.</figcaption>
+</figure>
+
+<div class="stats-row">
+  <div class="stat-tile"><div class="n">+20 901 €</div><div class="k">écart de bénéfice net en faveur du seuil 0,50</div></div>
+  <div class="stat-tile"><div class="n">8 €</div><div class="k">coût de fausse alerte supposé (à valider avec le métier)</div></div>
+  <div class="stat-tile"><div class="n">≈ 1,38 M€</div><div class="k">bénéfice net annualisé (extrapolation ×4,8)</div></div>
+</div>
+
+<div class="callout good">
+  <b>Le BC03 avait raison, et voici le chiffre qui le prouve.</b> Sa section 6 prévenait :
+  « un seuil optimisé sur un coût métier explicite serait probablement inférieur à 0,98 ». C'est
+  exactement ce que confirme ce calcul — mais seulement parce que le coût d'une fraude manquée
+  (le montant réel de la transaction, ici en moyenne 243 € par fraude) dépasse de loin le coût
+  d'une fausse alerte (8 €, hypothèse). Avec un coût de fausse alerte plus élevé (un appel
+  téléphonique international, un client perdu par irritation), l'arbitrage pencherait à nouveau
+  vers un seuil plus haut. La conclusion n'est donc pas « le seuil 0,50 est le bon seuil » — elle
+  est que le bon seuil dépend d'une hypothèse de coût à faire valider par les équipes fraude, pas
+  d'une métrique statistique choisie par défaut.
+</div>
+
+<!-- ============================ 6. DECISIONS ============================ -->
+<h2>6. Décisions structurantes du projet</h2>
+
+<table>
+<thead><tr><th>Décision</th><th>Bloc</th><th>Raison</th></tr></thead>
+<tbody>
+<tr><td>Générer des données synthétiques plutôt qu'utiliser un CSV Kaggle</td><td>BC01</td><td>Contrôle total du schéma et des typologies de fraude</td></tr>
+<tr><td>Séparer staging / dwh / mart / ops, une seule fonction de transformation</td><td>BC01</td><td>Batch et streaming ne peuvent pas diverger</td></tr>
+<tr><td>Split temporel plutôt qu'aléatoire pour train/test</td><td>BC03</td><td>Éviter la fuite d'information entre passé et futur</td></tr>
+<tr><td>Exclure <code>pays_transaction</code> des features du modèle</td><td>BC03</td><td>Séparateur parfait, artefact du générateur, non généralisable</td></tr>
+<tr><td>SMOTE réservé au modèle linéaire, pas à LightGBM</td><td>BC03</td><td>Fondement différent selon la famille d'algorithme</td></tr>
+<tr><td>Exposer deux seuils dans l'API plutôt qu'une décision figée</td><td>BC05</td><td>L'arbitrage coût métier relève du BC06, pas du code</td></tr>
+<tr><td>Autoencodeur comme signal complémentaire, pas un remplaçant</td><td>BC04</td><td>Détecte l'inconnu, pas un substitut au modèle supervisé</td></tr>
+<tr><td>Documenter les échecs CI/CD plutôt que ne montrer que le run final</td><td>BC05</td><td>Un pipeline non éprouvé reste un fichier de configuration</td></tr>
+</tbody>
+</table>
+
+<!-- ============================ 7. LIMITES ============================ -->
+<h2>7. Limites globales et feuille de route</h2>
+
+<table>
+<thead><tr><th>Limite</th><th>Bloc</th><th>Piste identifiée</th></tr></thead>
+<tbody>
+<tr><td>Pas de purge/rétention, secrets en clair en développement</td><td>BC06</td><td>Politique de rétention formalisée, vault de secrets</td></tr>
+<tr><td>Aucune validation sur un jeu de données réel externe</td><td>BC03</td><td>Rejouer le pipeline sur un jeu Kaggle réaliste (ex. Sparkov)</td></tr>
+<tr><td>Le générateur ne produit pas de rafales de fraude corrélées</td><td>BC01/BC04</td><td>Faire évoluer <code>skimming</code> en véritable séquence temporelle</td></tr>
+<tr><td>Le pipeline CI/CD construit et publie, mais ne déploie pas</td><td>BC05</td><td>Déploiement continu vers un environnement cible, rollback automatisé</td></tr>
+<tr><td>Le coût de fausse alerte est une hypothèse, pas une mesure</td><td>BC06</td><td>Calibrer avec les équipes fraude réelles avant toute décision de seuil</td></tr>
+</tbody>
+</table>
+
+<!-- ============================ 8. CONCLUSION ============================ -->
+<h2>8. Conclusion générale</h2>
+
+<p>
+Les six blocs de ce projet forment une chaîne continue, chacun consommant ce que le précédent a
+produit : un socle de données (BC01) qui rend possible un profiling honnête de ses propres limites
+(BC02), qui motive le passage à des modèles combinant plusieurs variables (BC03), dont les
+résultats sont mis à l'épreuve d'approches non supervisées et séquentielles (BC04), servis en
+production sous contrainte de latence et surveillés pour leur dérive (BC05), pour enfin être
+soumis à un audit de conformité et un chiffrage économique qui remettent en question — chiffres à
+l'appui — un choix qui semblait acquis (BC06). Le fil conducteur n'est pas l'absence d'erreurs :
+onze incidents réels ont été rencontrés et corrigés en cours de route, tous documentés plutôt que
+dissimulés. C'est cette discipline de vérification systématique, plus que la performance d'un
+modèle pris isolément, qui constitue la compétence démontrée par ce portfolio.
+</p>
+
+</body>
+</html>

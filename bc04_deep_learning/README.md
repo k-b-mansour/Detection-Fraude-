@@ -3,9 +3,11 @@
 Deux approches complémentaires au modèle supervisé du [BC03](../bc03_modeles_supervises/README.md),
 sur les mêmes 400 000 transactions labellisées :
 
+Notebooks (à exécuter dans l'ordre, cellule par cellule) :
+
 ```bash
-python bc04_deep_learning/scripts/autoencodeur_anomalies.py   # non supervisé
-python bc04_deep_learning/scripts/reseau_sequences.py         # LSTM + embeddings, compare au LightGBM du BC03
+jupyter notebook bc04_deep_learning/scripts/autoencodeur_anomalies.ipynb   # non supervisé
+jupyter notebook bc04_deep_learning/scripts/reseau_sequences.ipynb         # LSTM + embeddings, compare au LightGBM du BC03
 ```
 
 Produit les graphiques dans `outputs/`, les modèles dans `models/`, et les résumés chiffrés

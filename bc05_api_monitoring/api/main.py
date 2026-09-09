@@ -92,7 +92,7 @@ app = FastAPI(
 
 def _explication_binaire(expl: shap.Explanation) -> shap.Explanation:
     """Normalise la sortie SHAP vers la classe positive (fraude) — même
-    logique que bc03_modeles_supervises/scripts/explicabilite_shap.py."""
+    logique que bc03_modeles_supervises/scripts/explicabilite_shap.ipynb."""
     values = expl.values
     base_values = expl.base_values
     if values.ndim == 3:

@@ -8,14 +8,16 @@ un split **temporel** (train jusqu'au 19/10/2025, test au-delà) :
 - **Logistic Regression + SMOTE** (30 % de la classe majoritaire) — mesure l'effet réel de SMOTE
 - **LightGBM** (Gradient Boosting) — déséquilibre géré nativement par `scale_pos_weight`
 
+Notebooks (à exécuter dans l'ordre, cellule par cellule) :
+
 ```bash
-python bc03_modeles_supervises/scripts/entrainement_modeles.py
-python bc03_modeles_supervises/scripts/explicabilite_shap.py   # à lancer après (réutilise le modèle sauvegardé)
+jupyter notebook bc03_modeles_supervises/scripts/entrainement_modeles.ipynb
+jupyter notebook bc03_modeles_supervises/scripts/explicabilite_shap.ipynb   # à lancer après (réutilise le modèle sauvegardé)
 ```
 
 Produit les graphiques dans `outputs/`, le modèle retenu dans
 `models/modele_lightgbm.joblib`, et les résumés chiffrés `outputs/resume_bc03.json` /
-`outputs/resume_shap.json`. `explicabilite_shap.py` ajoute la vue globale (beeswarm) et
+`outputs/resume_shap.json`. `explicabilite_shap.ipynb` ajoute la vue globale (beeswarm) et
 l'explication d'une décision individuelle (waterfall) — réponse concrète à l'exigence RGPD Art. 22.
 
 Document détaillé : [docs/bc03-explication-v2.pdf](docs/bc03-explication-v2.pdf).

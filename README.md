@@ -53,9 +53,9 @@ pip install -r requirements.txt
 python bc01_socle_donnees/data/seed.py --clients 5000 --transactions 400000 --fraud-rate 0.015
 python bc01_socle_donnees/scripts/quality_checks.py
 
-# 5. Analyse (BC02, script) puis modèles / deep learning (BC03-BC04, notebooks Jupyter
+# 5. Analyse, modèles, deep learning (BC02 → BC04, notebooks Jupyter
 #    à exécuter dans l'ordre, cellule par cellule)
-python bc02_analyse_exploratoire/scripts/analyse_exploratoire.py
+jupyter notebook bc02_analyse_exploratoire/scripts/analyse_exploratoire.ipynb
 jupyter notebook bc03_modeles_supervises/scripts/entrainement_modeles.ipynb
 jupyter notebook bc03_modeles_supervises/scripts/explicabilite_shap.ipynb
 jupyter notebook bc04_deep_learning/scripts/autoencodeur_anomalies.ipynb

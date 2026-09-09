@@ -5,7 +5,7 @@ déséquilibre de classes, profiling des fraudeurs, statistiques descriptives, d
 univariées (z-score, IQR).
 
 ```bash
-python bc02_analyse_exploratoire/scripts/analyse_exploratoire.py
+jupyter notebook bc02_analyse_exploratoire/scripts/analyse_exploratoire.ipynb
 ```
 
 Produit les graphiques dans `outputs/` et le résumé chiffré `outputs/resume_bc02.json`.

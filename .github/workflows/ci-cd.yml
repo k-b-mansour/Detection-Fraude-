@@ -8,9 +8,10 @@
 #               une pull request.
 #
 # Le modèle LightGBM (bc03_modeles_supervises/models/modele_lightgbm.joblib)
-# est versionné dans le dépôt pour ce projet portfolio — une chaîne MLOps de
-# production le récupérerait plutôt depuis un registre de modèles (MLflow,
-# etc.), hors périmètre de ce bloc.
+# reste versionné dans le dépôt : il sert de repli et permet aux tests de
+# tourner sans infrastructure. En fonctionnement normal (docker-compose),
+# l'API le charge depuis le registre de modèles MLflow (service `mlflow`) ;
+# la CI, elle, s'exécute sans MLFLOW_TRACKING_URI et valide donc le repli fichier.
 
 name: CI/CD — API de scoring (BC05)
 

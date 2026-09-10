@@ -68,9 +68,34 @@ services:
     depends_on:
       - kafka
 
+  # Serveur de suivi d'expériences MLflow (BC03/BC04) + registre de modèles.
+  # Backend PostgreSQL (base `mlflow` créée au démarrage sur l'instance BC01),
+  # artefacts sur le volume mlflow_artifacts et servis en proxy (--serve-artifacts).
+  mlflow:
+    build:
+      context: .
+      dockerfile: mlflow-server/Dockerfile
+    container_name: fraud_mlflow
+    ports:
+      - "5000:5000"
+    environment:
+      PGHOST: postgres
+      PGPORT: 5432
+      PGUSER: fraud_admin
+      PGPASSWORD: fraud_secret
+      PGADMINDB: frauddetect
+      MLFLOW_DB: mlflow
+    volumes:
+      - mlflow_artifacts:/mlartifacts
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   # BC05 — API de scoring temps réel, sert le modèle LightGBM du BC03.
   # Redis ici : nom de service + port interne (6379), pas le port hôte 6380
   # utilisé par les scripts lancés hors conteneur.
+  # MLFLOW_* : l'API charge le modèle depuis le registre MLflow si disponible,
+  # sinon elle retombe sur le .joblib versionné embarqué dans l'image.
   api:
     build:
       context: .
@@ -81,10 +106,15 @@ services:
     environment:
       REDIS_HOST: redis
       REDIS_PORT: 6379
+      MLFLOW_TRACKING_URI: http://mlflow:5000
+      MLFLOW_MODELE: fraud_lightgbm
+      MLFLOW_MODELE_ALIAS: production
     depends_on:
       - redis
+      - mlflow
 
 volumes:
   pg_data:
   redis_data:
   kafka_data:
+  mlflow_artifacts:

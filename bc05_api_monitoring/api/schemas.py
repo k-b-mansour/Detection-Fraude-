@@ -44,6 +44,9 @@ class FraudPrediction(BaseModel):
 class HealthResponse(BaseModel):
     status: str
     version_modele: str
+    source_modele: str = Field(
+        ..., description="Provenance du modèle chargé : 'mlflow:models:/...' ou 'fichier:bc03/...'"
+    )
     auc_roc_reference: float
     seuil_optimise: float
     uptime_s: float

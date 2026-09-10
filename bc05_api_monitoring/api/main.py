@@ -1,11 +1,16 @@
 """
 BC05 — API de scoring temps réel.
 
-Sert le modèle LightGBM entraîné et sauvegardé au BC03, avec explicabilité
-SHAP par prédiction (même technique qu'au BC03, appliquée ici en ligne).
-Le score s'accompagne de deux lectures du seuil (défaut 0,5 / optimisé
-0,98, cf. bc03-explication-v2.pdf section 6), et, si un client_id connu
-est fourni, des compteurs temps réel du feature store Redis du BC01.
+Sert le modèle LightGBM entraîné au BC03, avec explicabilité SHAP par
+prédiction (même technique qu'au BC03, appliquée ici en ligne). Le score
+s'accompagne de deux lectures du seuil (défaut 0,5 / optimisé 0,98, cf.
+bc03-explication-v2.pdf section 6), et, si un client_id connu est fourni,
+des compteurs temps réel du feature store Redis du BC01.
+
+Chargement du modèle : depuis le registre MLflow (`models:/<MLFLOW_MODELE>@<alias>`)
+si MLFLOW_TRACKING_URI est défini et joignable, sinon repli sur le fichier
+`bc03_modeles_supervises/models/modele_lightgbm.joblib` versionné dans le dépôt.
+Le repli garantit que l'API et ses tests restent exécutables hors infrastructure.
 
 Démarrage :
     uvicorn bc05_api_monitoring.api.main:app --host 0.0.0.0 --port 8000
@@ -45,10 +50,54 @@ VERSION_MODELE = "lightgbm-bc03-v1"
 _etat = {}
 
 
+def _serveur_mlflow_joignable(uri: str, timeout: float = 2.0) -> bool:
+    """Sonde rapide de `<uri>/health` — évite que le démarrage de l'API attende
+    les retries du client MLflow quand le serveur de suivi n'est pas prêt."""
+    if not uri.startswith(("http://", "https://")):
+        return True
+    try:
+        import urllib.request
+
+        with urllib.request.urlopen(uri.rstrip("/") + "/health", timeout=timeout):
+            return True
+    except Exception:
+        return False
+
+
+def _charger_modele() -> tuple[object, str]:
+    """Charge le pipeline LightGBM depuis le registre MLflow, avec repli fichier.
+
+    Retourne (pipeline, source) où `source` décrit la provenance pour /health.
+    Le registre est interrogé uniquement si MLFLOW_TRACKING_URI est défini ;
+    toute erreur (serveur absent, modèle non enregistré) bascule sur le
+    .joblib versionné du BC03 — comportement attendu en CI et hors Docker.
+    """
+    uri = os.getenv("MLFLOW_TRACKING_URI")
+    if uri and _serveur_mlflow_joignable(uri):
+        nom = os.getenv("MLFLOW_MODELE", "fraud_lightgbm")
+        alias = os.getenv("MLFLOW_MODELE_ALIAS", "").strip()
+        ref = f"models:/{nom}@{alias}" if alias else f"models:/{nom}/latest"
+        try:
+            import mlflow
+            from mlflow.sklearn import load_model
+
+            mlflow.set_tracking_uri(uri)
+            pipeline = load_model(ref)
+            log.info("Modèle chargé depuis le registre MLflow (%s | %s)", uri, ref)
+            return pipeline, f"mlflow:{ref}"
+        except Exception as exc:
+            log.warning("Registre MLflow indisponible (%s | %s) : %s — repli sur le fichier versionné",
+                        uri, ref, exc)
+
+    pipeline = joblib.load(MODEL_PATH)
+    log.info("Modèle chargé depuis le fichier versionné du BC03 (%s)", MODEL_PATH)
+    return pipeline, "fichier:bc03/modele_lightgbm.joblib"
+
+
 @asynccontextmanager
 async def cycle_de_vie(app: FastAPI):
     t0 = time.perf_counter()
-    _etat["pipeline"] = joblib.load(MODEL_PATH)
+    _etat["pipeline"], _etat["source_modele"] = _charger_modele()
     _etat["prep"] = _etat["pipeline"].named_steps["prep"]
     _etat["modele"] = _etat["pipeline"].named_steps["clf"]
     _etat["noms_features"] = (
@@ -76,8 +125,9 @@ async def cycle_de_vie(app: FastAPI):
         log.warning("Redis indisponible, l'API fonctionnera sans enrichissement temps réel (%s)", exc)
 
     _etat["demarre_a"] = time.perf_counter()
-    log.info("Modèle chargé en %.0f ms (version=%s, AUC référence=%.4f, seuil optimisé=%.2f)",
-              (time.perf_counter() - t0) * 1000, VERSION_MODELE, _etat["auc_roc_reference"], _etat["seuil_optimise"])
+    log.info("Modèle prêt en %.0f ms (version=%s, source=%s, AUC référence=%.4f, seuil optimisé=%.2f)",
+              (time.perf_counter() - t0) * 1000, VERSION_MODELE, _etat["source_modele"],
+              _etat["auc_roc_reference"], _etat["seuil_optimise"])
     yield
     _etat.clear()
 
@@ -124,6 +174,7 @@ def health():
     return HealthResponse(
         status="ok",
         version_modele=VERSION_MODELE,
+        source_modele=_etat["source_modele"],
         auc_roc_reference=_etat["auc_roc_reference"],
         seuil_optimise=_etat["seuil_optimise"],
         uptime_s=round(time.perf_counter() - _etat["demarre_a"], 1),

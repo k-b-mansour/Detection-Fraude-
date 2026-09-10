@@ -7,6 +7,10 @@ __pycache__/
 *.egg-info/
 .ipynb_checkpoints/
 
+# Store MLflow local (repli quand le serveur de suivi Docker n'est pas démarré)
+mlruns/
+mlartifacts/
+
 # Rapports Evidently volumineux (régénérés par drift_report.py)
 bc05_api_monitoring/outputs/*.html
 bc05_api_monitoring/outputs/capture_*.png

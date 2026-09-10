@@ -46,6 +46,9 @@ def test_health(client):
     assert corps["status"] == "ok"
     assert 0.0 <= corps["auc_roc_reference"] <= 1.0
     assert 0.0 <= corps["seuil_optimise"] <= 1.0
+    # Hors infrastructure (pas de MLFLOW_TRACKING_URI), l'API doit retomber
+    # sur le modèle .joblib versionné du BC03.
+    assert corps["source_modele"].startswith("fichier:")
 
 
 def test_predict_transaction_legitime(client):

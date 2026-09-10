@@ -2,7 +2,7 @@
 
 Un serveur de suivi tourne dans le `docker-compose` racine (service `mlflow`) :
 
-  - UI        : http://localhost:5000
+  - UI        : http://localhost:5001  (5000 déjà pris par un autre projet local ; interne 5000)
   - backend   : PostgreSQL (base `mlflow`, même instance que le socle BC01)
   - artefacts : volume Docker `mlflow_artifacts`, servis en proxy par le serveur
                 (`--serve-artifacts`) — les notebooks n'ont donc pas besoin d'un
@@ -53,11 +53,11 @@ def _serveur_joignable(uri: str, timeout: float = 2.0) -> bool:
 def init_mlflow(experiment: str) -> str:
     """Configure MLflow pour l'expérience donnée.
 
-    Cible le serveur défini par MLFLOW_TRACKING_URI (défaut : http://localhost:5000).
+    Cible le serveur défini par MLFLOW_TRACKING_URI (défaut : http://localhost:5001).
     S'il ne répond pas sur /health, bascule sur le backend SQLite local `mlruns/`.
     Retourne l'URI de suivi effectif.
     """
-    uri = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5000")
+    uri = os.getenv("MLFLOW_TRACKING_URI", "http://localhost:5001")
     repli = not _serveur_joignable(uri)
     if repli:
         _DIR_LOCAL.mkdir(parents=True, exist_ok=True)

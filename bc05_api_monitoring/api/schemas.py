@@ -3,7 +3,7 @@ from typing import Literal, Optional
 
 from pydantic import BaseModel, Field
 
-
+#valide chaque entrée
 class TransactionInput(BaseModel):
     """Une transaction à scorer, mêmes variables que le modèle du BC03."""
 

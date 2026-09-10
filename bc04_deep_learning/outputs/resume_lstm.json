@@ -2,15 +2,15 @@
   "longueur_sequence": 5,
   "n_sequences_train": 299971,
   "n_sequences_test": 80029,
-  "n_epochs": 38,
-  "poids_classe_fraude": 8.14,
+  "n_epochs": 28,
+  "poids_classe_fraude": 8.13,
   "lstm": {
     "seuil": 0.5,
-    "auc_roc": 0.9974,
-    "average_precision": 0.897,
-    "precision": 0.5429,
-    "recall": 0.9689,
-    "f1": 0.6959
+    "auc_roc": 0.9969,
+    "average_precision": 0.8754,
+    "precision": 0.4932,
+    "recall": 0.9746,
+    "f1": 0.6549
   },
   "lightgbm_meme_test": {
     "seuil": 0.5,
@@ -21,9 +21,9 @@
     "f1": 0.7471
   },
   "complementarite": {
-    "capturee_par_les_deux": 1161,
-    "capturee_par_lstm_seul": 22,
-    "capturee_par_lgbm_seul": 19,
-    "manquee_par_les_deux": 19
+    "capturee_par_les_deux": 1165,
+    "capturee_par_lstm_seul": 25,
+    "capturee_par_lgbm_seul": 15,
+    "manquee_par_les_deux": 16
   }
 }
